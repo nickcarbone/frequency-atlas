@@ -1,270 +1,283 @@
 {
- "checked": "2026-11-23T06:32:01Z",
+ "checked": "2026-11-23T18:08:09Z",
  "method": "Weekly automated check: fetched the start of each source and confirmed audio (HLS: playlist and a segment).",
  "results": {
-  "bbc-world-service": {
+  "noaa-kec49": {
    "ok": true,
-   "ms": 849,
+   "ms": 491,
    "note": "200 audio/mpeg"
   },
   "noaa-wwg24": {
    "ok": true,
-   "ms": 915,
-   "note": "200 audio/mpeg"
-  },
-  "bbc-radio-4": {
-   "ok": true,
-   "ms": 966,
-   "note": "segment 206"
-  },
-  "noaa-kec49": {
-   "ok": true,
-   "ms": 1572,
+   "ms": 756,
    "note": "200 audio/mpeg"
   },
   "cbc-north-iqaluit": {
    "ok": true,
-   "ms": 1006,
+   "ms": 752,
    "note": "206 audio/mpeg"
+  },
+  "bbc-world-service": {
+   "ok": true,
+   "ms": 1385,
+   "note": "200 audio/mpeg"
+  },
+  "bbc-radio-4": {
+   "ok": true,
+   "ms": 1399,
+   "note": "segment 206"
   },
   "yle-sami": {
    "ok": true,
-   "ms": 946,
-   "note": "200 audio/aacp"
-  },
-  "bfbs-falklands": {
-   "ok": true,
-   "ms": 983,
+   "ms": 698,
    "note": "200 audio/aacp"
   },
   "nrk-sapmi": {
    "ok": true,
-   "ms": 1837,
+   "ms": 1648,
    "note": "200 audio/mpeg"
+  },
+  "bfbs-falklands": {
+   "ok": true,
+   "ms": 1092,
+   "note": "200 audio/aacp"
   },
   "bfbs-gurkha": {
    "ok": true,
-   "ms": 938,
+   "ms": 1084,
    "note": "200 audio/aacp"
   },
-  "vatican-radio": {
+  "wgxc": {
    "ok": true,
-   "ms": 1073,
+   "ms": 285,
    "note": "200 audio/mpeg"
   },
   "radio-prague-intl": {
    "ok": true,
-   "ms": 584,
+   "ms": 499,
    "note": "206 audio/mpeg"
   },
   "standing-wave": {
    "ok": true,
-   "ms": 593,
-   "note": "200 audio/mpeg"
-  },
-  "wgxc": {
-   "ok": true,
-   "ms": 732,
+   "ms": 533,
    "note": "200 audio/mpeg"
   },
   "resonance-extra": {
    "ok": true,
-   "ms": 737,
-   "note": "200 audio/mpeg"
-  },
-  "radio-worm": {
-   "ok": true,
-   "ms": 811,
+   "ms": 696,
    "note": "200 audio/mpeg"
   },
   "cashmere-radio": {
    "ok": true,
-   "ms": 1251,
+   "ms": 1102,
    "note": "200 audio/mpeg"
   },
-  "morseops-20": {
+  "radio-worm": {
    "ok": true,
-   "ms": 955,
+   "ms": 1141,
    "note": "200 audio/mpeg"
+  },
+  "knr-radio": {
+   "ok": true,
+   "note": "Verified by playback on iPhone, 23 Nov 2026; the automated checker's network can't reach this host"
   },
   "riafc": {
    "ok": true,
-   "ms": 1202,
+   "ms": 1112,
    "note": "200 audio/mpeg"
+  },
+  "vatican-radio": {
+   "ok": true,
+   "ms": 2906,
+   "note": "200 audio/mpeg"
+  },
+  "sr-sapmi": {
+   "ok": true,
+   "note": "Verified by playback on iPhone, 23 Nov 2026; the automated checker's network can't reach this host"
+  },
+  "orcasound-lab": {
+   "ok": true,
+   "ms": 482,
+   "note": "segment 206"
   },
   "lincolnshire-poacher": {
    "ok": true,
-   "ms": 512,
-   "note": "206 audio/mpeg"
-  },
-  "hm01": {
-   "ok": true,
-   "ms": 442,
-   "note": "206 audio/mpeg"
-  },
-  "uvb-76": {
-   "ok": true,
-   "ms": 470,
+   "ms": 666,
    "note": "206 audio/mpeg"
   },
   "swedish-rhapsody": {
    "ok": true,
-   "ms": 878,
+   "ms": 569,
    "note": "206 audio/mpeg"
   },
-  "usaf-eam": {
+  "morseops-20": {
    "ok": true,
-   "ms": 893,
+   "ms": 1696,
+   "note": "200 audio/mpeg"
+  },
+  "hm01": {
+   "ok": true,
+   "ms": 741,
    "note": "206 audio/mpeg"
   },
-  "chu-canada": {
+  "uvb-76": {
    "ok": true,
-   "ms": 477,
-   "note": "206 audio/mpeg"
-  },
-  "afan-mcmurdo": {
-   "ok": true,
-   "ms": 617,
+   "ms": 343,
    "note": "206 audio/mpeg"
   },
   "wwvh": {
    "ok": true,
-   "ms": 859,
+   "ms": 190,
    "note": "206 audio/mpeg"
   },
-  "gander-volmet": {
+  "chu-canada": {
    "ok": true,
-   "ms": 528,
+   "ms": 648,
+   "note": "206 audio/mpeg"
+  },
+  "usaf-eam": {
+   "ok": true,
+   "ms": 966,
    "note": "206 audio/mpeg"
   },
   "shannon-volmet": {
    "ok": true,
-   "ms": 676,
+   "ms": 796,
+   "note": "206 audio/mpeg"
+  },
+  "gander-volmet": {
+   "ok": true,
+   "ms": 687,
    "note": "206 audio/mpeg"
   },
   "shipping-forecast-2015": {
    "ok": true,
-   "ms": 691,
-   "note": "206 audio/mpeg"
-  },
-  "uscg-nmc": {
-   "ok": true,
-   "ms": 543,
+   "ms": 607,
    "note": "206 audio/mpeg"
   },
   "bollettino-1977": {
    "ok": true,
-   "ms": 789,
-   "note": "206 audio/mpeg"
-  },
-  "prinsendam-sos": {
-   "ok": true,
-   "ms": 651,
+   "ms": 652,
    "note": "206 audio/mpeg"
   },
   "night-of-nights": {
    "ok": true,
-   "ms": 894,
+   "ms": 351,
    "note": "206 audio/mpeg"
   },
-  "lra36": {
+  "uscg-nmc": {
    "ok": true,
-   "ms": 598,
+   "ms": 428,
    "note": "206 audio/mpeg"
   },
   "bbc-midwinter-2023": {
    "ok": true,
-   "ms": 477,
+   "ms": 393,
+   "note": "206 audio/mpeg"
+  },
+  "prinsendam-sos": {
+   "ok": true,
+   "ms": 925,
    "note": "206 audio/mpeg"
   },
   "ham-palmer-1974": {
    "ok": true,
-   "ms": 465,
+   "ms": 496,
+   "note": "206 audio/mpeg"
+  },
+  "afan-mcmurdo": {
+   "ok": true,
+   "ms": 2789,
    "note": "206 audio/mpeg"
   },
   "svalbard-storm": {
    "ok": true,
-   "ms": 592,
+   "ms": 233,
+   "note": "206 audio/mpeg"
+  },
+  "lra36": {
+   "ok": true,
+   "ms": 1169,
    "note": "206 audio/mpeg"
   },
   "pyramiden": {
    "ok": true,
-   "ms": 617,
-   "note": "206 audio/mpeg"
-  },
-  "radio-pyongyang-1975": {
-   "ok": true,
-   "ms": 620,
-   "note": "206 audio/mpeg"
-  },
-  "voice-of-korea-2024": {
-   "ok": true,
-   "ms": 599,
-   "note": "206 audio/mpeg"
-  },
-  "tibet-pbs": {
-   "ok": true,
-   "ms": 277,
+   "ms": 581,
    "note": "206 audio/mpeg"
   },
   "kcbs-sinuiju": {
    "ok": true,
-   "ms": 530,
+   "ms": 487,
    "note": "206 audio/mpeg"
   },
-  "furusato-no-kaze": {
+  "voice-of-korea-2024": {
    "ok": true,
-   "ms": 699,
+   "ms": 596,
    "note": "206 audio/mpeg"
   },
-  "voice-of-mongolia": {
+  "radio-pyongyang-1975": {
    "ok": true,
-   "ms": 615,
+   "ms": 797,
    "note": "206 audio/mpeg"
   },
-  "radio-australia-2000": {
+  "tibet-pbs": {
    "ok": true,
-   "ms": 560,
+   "ms": 397,
    "note": "206 audio/mpeg"
   },
   "france-inter-lw": {
    "ok": true,
-   "ms": 757,
+   "ms": 431,
+   "note": "206 audio/mpeg"
+  },
+  "furusato-no-kaze": {
+   "ok": true,
+   "ms": 858,
+   "note": "206 audio/mpeg"
+  },
+  "radio-australia-2000": {
+   "ok": true,
+   "ms": 453,
    "note": "206 audio/mpeg"
   },
   "interval-signals-1991": {
    "ok": true,
-   "ms": 766,
+   "ms": 471,
    "note": "206 audio/mpeg"
   },
   "dawn-chorus-alberta": {
    "ok": true,
-   "ms": 590,
+   "ms": 432,
    "note": "206 audio/mpeg"
   },
   "loma-prieta-kgo": {
    "ok": true,
-   "ms": 839,
+   "ms": 613,
    "note": "206 audio/mpeg"
   },
   "whistlers-london": {
    "ok": true,
-   "ms": 555,
+   "ms": 575,
    "note": "206 audio/mpeg"
   },
   "alaska-chorus": {
    "ok": true,
-   "ms": 391,
+   "ms": 353,
    "note": "206 audio/mpeg"
   },
   "omega-tones": {
    "ok": true,
-   "ms": 469,
+   "ms": 435,
+   "note": "206 audio/mpeg"
+  },
+  "voice-of-mongolia": {
+   "ok": true,
+   "ms": 1940,
    "note": "206 audio/mpeg"
   },
   "voyager-jupiter": {
    "ok": true,
-   "ms": 662,
+   "ms": 1532,
    "note": "206 audio/mpeg"
   }
  }
