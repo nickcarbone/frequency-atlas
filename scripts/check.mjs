@@ -46,6 +46,21 @@ async function checkHls(url, depth = 0) {
 }
 
 const data = JSON.parse(await readFile("sources.json", "utf8"));
+
+// Some sources publish a rotating path (e.g. Orcasound's latest.txt). Resolve it first.
+async function resolveUrl(s) {
+  if (!s.resolve) return s.url;
+  const r = await grab(s.resolve.latest, 256);
+  return s.url.replace("{latest}", r.bytes.toString("utf8").trim());
+}
+// Stations with set broadcast hours may serve nothing outside them.
+function inHours(s, d = new Date()) {
+  if (!s.onAir) return true;
+  const [h, m] = new Intl.DateTimeFormat("en-GB", { timeZone: s.onAir.tz, hour: "2-digit", minute: "2-digit", hour12: false }).format(d).split(":").map(Number);
+  const n = (h % 24) * 60 + m, hm = t => { const [a, b] = t.split(":").map(Number); return a * 60 + b; };
+  const a = hm(s.onAir.from), b = hm(s.onAir.to);
+  return a < b ? n >= a && n < b : n >= a || n < b;
+}
 const results = {};
 let i = 0;
 async function worker() {
@@ -54,14 +69,17 @@ async function worker() {
     const t0 = Date.now();
     try {
       let res;
-      if (s.fmt === "hls") res = await checkHls(s.url);
+      const url = await resolveUrl(s);
+      if (s.fmt === "hls") res = await checkHls(url);
       else {
-        const r = await grab(s.url);
+        const r = await grab(url);
+        if (r.status === 401 || r.status === 403 || /sverigesradio\.se\/reserv/.test(r.url)) { res = { ok: null, why: `${r.status}: blocked from the checker's network, not judged` }; results[s.id] = { ok: null, ms: Date.now() - t0, note: res.why }; console.log("SKIP  " + s.id + "  " + res.why); continue; }
         res = { ok: r.status < 400 && (r.ct.startsWith("audio/") || r.ct.includes("mpeg") || r.ct.includes("aac") || r.ct.includes("ogg") || looksAudio(r.bytes)) && r.bytes.length > 1024, why: `${r.status} ${r.ct}` };
       }
+      if (!res.ok && !inHours(s)) res = { ok: null, why: "outside broadcast hours: " + res.why };
       results[s.id] = { ok: res.ok, ms: Date.now() - t0, note: res.why };
     } catch (e) {
-      results[s.id] = { ok: false, ms: Date.now() - t0, note: String(e.name || e) };
+      results[s.id] = { ok: inHours(s) ? false : null, ms: Date.now() - t0, note: String(e.name || e) };
     }
     console.log((results[s.id].ok ? "OK  " : "FAIL") + "  " + s.id + "  " + results[s.id].note);
   }
@@ -73,5 +91,5 @@ const out = {
   results,
 };
 await writeFile("status.json", JSON.stringify(out, null, 1) + "\n");
-const bad = Object.entries(results).filter(([, r]) => !r.ok).map(([k]) => k);
+const bad = Object.entries(results).filter(([, r]) => r.ok === false).map(([k]) => k);
 console.log(`\n${data.sources.length - bad.length}/${data.sources.length} passing${bad.length ? " — failing: " + bad.join(", ") : ""}`);

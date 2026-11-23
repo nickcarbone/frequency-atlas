@@ -389,10 +389,16 @@ function fmtF(k){ if(k==null)return "—"; if(k>=30000)return {v:(k/1000).toFixe
 const tickLab=k=>k>=1000?(k/1000)+"M":k+"k";
 
 /* ---------- status ---------- */
-function statusOf(s){ if(LOCAL[s.id]!=null) return LOCAL[s.id]?"ok":"bad"; const r=STATUS.results&&STATUS.results[s.id]; if(!r)return "unk"; return r.ok?"ok":"bad"}
+function statusOf(s){ if(LOCAL[s.id]!=null) return LOCAL[s.id]?"ok":"bad"; const r=STATUS.results&&STATUS.results[s.id]; if(!r||r.ok==null)return "unk"; return r.ok?"ok":"bad"}
 function verifiedLine(s){ const st=statusOf(s), d=STATUS.checked?new Date(STATUS.checked):null; const ds=d?d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):null;
   if(LOCAL[s.id]!=null) return LOCAL[s.id]?"Responded to a check from this device just now":"Did not respond to a check from this device";
   if(st==="ok") return ds?`Verified working ${ds}`:"Verified"; if(st==="bad") return ds?`Failed the weekly check on ${ds}`:"Failed last check"; return "Not yet checked"}
+
+/* ---------- broadcast hours & URL resolving ---------- */
+const hm=t=>{const [h,m]=t.split(":").map(Number);return h*60+m};
+function minsIn(tz,d=new Date()){ const [h,m]=new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(d).split(":").map(Number); return (h%24)*60+m }
+function inHours(s,d=new Date()){ if(!s.onAir)return true; const n=minsIn(s.onAir.tz,d), a=hm(s.onAir.from), b=hm(s.onAir.to); return a<b?(n>=a&&n<b):(n>=a||n<b) }
+async function resolveUrl(s){ if(!s.resolve)return s.url; const v=(await fetch(s.resolve.latest,{cache:"no-store"}).then(r=>r.text())).trim(); return s.url.replace("{latest}",v) }
 
 /* ---------- player ---------- */
 const au=$("#au"); let hls=null, hlsLoading=null;
@@ -415,16 +421,17 @@ async function play(s){
   const isFile=!(s.kind==="live"||s.kind==="stream");
   $("#seek").hidden=!isFile; $("#prog i").style.width="0";
   try{
+    const url=await resolveUrl(s);
     if(s.fmt==="hls"&&!canNativeHls){ await loadHls(); if(!window.Hls||!Hls.isSupported())throw new Error("HLS unsupported");
-      hls=new Hls({lowLatencyMode:false}); hls.attachMedia(au); hls.loadSource(s.url);
+      hls=new Hls({lowLatencyMode:false}); hls.attachMedia(au); hls.loadSource(url);
       hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setP("error","No signal");LOCAL[s.id]=false;dropFromDial(s)}});
-    } else { au.src=s.url; }
+    } else { au.src=url; }
     au.volume=+$("#vol").value; await au.play();
   }catch(e){ if(e&&e.name==="NotAllowedError"){setP("paused","Tap play to start")} else if(e&&e.name!=="AbortError"){setP("error","No signal");} }
   mediaSession(s); renderRows(); if(state.tuned&&state.tuned.id===s.id) renderTuned(s);
 }
 function resume(){ const s=state.cur; if(!s)return; if(s.kind==="live"||s.kind==="stream"){ // rejoin live edge
-    if(hls){hls.startLoad(-1); if(hls.liveSyncPosition)au.currentTime=hls.liveSyncPosition} else if(au.currentSrc){ au.src=s.url; } }
+    if(hls){hls.startLoad(-1); if(hls.liveSyncPosition)au.currentTime=hls.liveSyncPosition} else if(au.currentSrc){ resolveUrl(s).then(u=>{au.src=u;au.play().catch(()=>setP("paused"))}); setP("loading"); return } }
   setP("loading"); au.play().catch(()=>setP("paused")); }
 function toggle(){ if(!state.cur)return; if(au.paused||pstate==="error"){ if(pstate==="error"){const s=state.cur;state.cur=null;play(s)} else resume(); } else { au.pause(); setP("paused"); if(hls&&(state.cur.kind==="live"||state.cur.kind==="stream"))hls.stopLoad(); } }
 au.addEventListener("playing",()=>{setP("playing"); if(state.cur)LOCAL[state.cur.id]=true});
@@ -459,7 +466,8 @@ function renderRows(){ $$(".row").forEach(r=>r.classList.toggle("playing",!!(sta
 function specs(s){ const k=parseFreq(s), b=bandOf(s), lt=s.tz&&s.lat!=null?localTime(s.tz):null;
   const rows=[["Frequency",s.freq||(b?b+" · frequency not logged":"Not on a frequency")],["Type",KIND[s.kind]],["Category",DATA.categories[s.cat]],["Language",s.lang||"—"],["Mode",s.mode||"—"],["Origin",s.place+(s.country&&s.country!==s.place&&s.country!=="—"?", "+s.country:"")]];
   if(s.recorded)rows.push(["Recorded",s.recorded+(s.utc?" · "+s.utc+" UTC":"")]); else if(lt)rows.push(["Local time there",lt]);
-  if(s.schedule)rows.push(["Scheduled",s.schedule.label+" · "+s.schedule.times.join(", ")+" UK"]);
+  if(s.schedule){ const D=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]; rows.push(["Scheduled",s.schedule.label+" · "+(s.schedule.days?s.schedule.days.map(i=>D[i]).join(", ")+" ":"daily ")+s.schedule.times.join(", ")+" "+(s.schedule.tzLabel||"UK")+" time"]) }
+  if(s.onAir)rows.push(["On air",`${s.onAir.from}–${s.onAir.to} local · ${inHours(s)?"on now":"off air now"}`]);
   rows.push(["Signal",verifiedLine(s)]);
   return `<dl class="specs">${rows.map(r=>`<div><dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd></div>`).join("")}</dl>`}
 function playBtn(s){ const on=state.cur&&state.cur.id===s.id&&pstate==="playing"; return `<button class="btn primary" data-play="${s.id}">${on?ICON.pause:ICON.play}${on?"Pause":(s.kind==="live"||s.kind==="stream")?"Listen live":"Play recording"}</button>`}
@@ -489,7 +497,7 @@ sheet.addEventListener("close",()=>{ if(location.hash.startsWith("#/s/"))history
 let marks=[], dialW=0, segs=[];
 let dialMode="live"; try{ dialMode=localStorage.getItem("fa.dialmode")||"live" }catch(e){}
 const isLiveKind=s=>s.kind==="live"||s.kind==="stream";
-function onAirNow(){ return SRC.filter(s=>isLiveKind(s)&&statusOf(s)!=="bad") }
+function onAirNow(){ return SRC.filter(s=>isLiveKind(s)&&statusOf(s)!=="bad"&&inHours(s)) }
 function dialSet(){ return dialMode==="live"?onAirNow():SRC }
 function dialCopy(){ const n=onAirNow().length;
   $("#n-live").textContent=n; $("#n-all").textContent=SRC.length; $("#m-live").setAttribute("aria-pressed",String(dialMode==="live")); $("#m-all").setAttribute("aria-pressed",String(dialMode==="all"));
@@ -562,9 +570,11 @@ function renderTuned(s){ $("#tuned").innerHTML=`<div><div class="k">${kindChip(s
   const m=$(`[data-more="${s.id}"]`); if(m)m.onclick=()=>openSheet(s) }
 
 /* ---------- NOW ---------- */
-function nextSchedule(s,now=new Date()){ // returns minutes until next scheduled time in its tz
-  const sc=s.schedule; if(!sc)return null; const parts=new Intl.DateTimeFormat("en-GB",{timeZone:sc.tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(now).split(":").map(Number);
-  const cur=parts[0]%24*60+parts[1]; let best=1e9; sc.times.forEach(t=>{const [h,m]=t.split(":").map(Number); let d=h*60+m-cur; if(d<-8)d+=1440; best=Math.min(best,d)}); return best }
+function nextSchedule(s,now=new Date()){ // minutes until the next scheduled time (negative = started up to 8 min ago)
+  const sc=s.schedule; if(!sc)return null; const cur=minsIn(sc.tz,now);
+  const wd=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(new Intl.DateTimeFormat("en-GB",{timeZone:sc.tz,weekday:"short"}).format(now));
+  let best=1e9; for(let k=0;k<8;k++){ const day=(wd+k)%7; if(sc.days&&!sc.days.includes(day))continue; sc.times.forEach(t=>{const d=k*1440+hm(t)-cur; if(d>=-8)best=Math.min(best,d)}) } return best }
+const fmtMins=m=>m<=0?"LIVE":m>=1440?Math.floor(m/1440)+"d "+Math.floor(m%1440/60)+"h":(Math.floor(m/60)?Math.floor(m/60)+"h ":"")+pad(m%60)+"m";
 function renderNow(){
   const now=new Date(), g=$("#nowgrid"); g.innerHTML="";
   const geo=SRC.filter(s=>s.lat!=null);
@@ -573,17 +583,15 @@ function renderNow(){
   const night=lives.filter(s=>{const h=localHour(s.tz,now);return h!=null&&h>=0&&h<5});
   const utcMin=now.getUTCHours()*60+now.getUTCMinutes();
   const sameHour=SRC.filter(s=>s.utc).map(s=>{const [h,m]=s.utc.split(":").map(Number);let d=Math.abs(h*60+m-utcMin);d=Math.min(d,1440-d);return {s,d}}).filter(o=>o.d<=75).sort((a,b)=>a.d-b.d);
-  const bbc=BY["bbc-radio-4"]; const mins=nextSchedule(bbc,now);
+  const sched=SRC.filter(s=>s.schedule).map(s=>({s,m:nextSchedule(s,now)})).sort((a,b)=>a.m-b.m); const first=sched[0]; const mins=first?first.m:null;
   // headline
   let head;
-  if(mins!=null&&mins<=20&&mins>=-8) head=mins>0?`The Shipping Forecast begins in <em>${mins} min</em>.`:`The Shipping Forecast is <em>on air</em>.`;
+  if(first&&mins<=20&&mins>=-8) head=mins>0?`${esc(first.s.schedule.label.split(",")[0])} begins in <em>${mins} min</em>.`:`${esc(first.s.schedule.label.split(",")[0])} is <em>on air</em>.`;
   else if(grey.length) { const o=grey[0]; head=`${o.e>=0?(isRising(o.s)?"Sunrise":"Sunset"):(isRising(o.s)?"First light":"Last light")} over <em>${esc(o.s.place.split(",")[0])}</em>.`}
   else head=`Listening by the <em>clock</em>.`;
   $("#nowlede").innerHTML=head;
-  // schedule card
-  const hh=Math.floor(mins/60), mm=mins%60;
-  g.append(card("Scheduled · BBC Radio 4",mins<=0&&mins>=-8?"On air now":"Next Shipping Forecast",
-    `<div class="count">${mins<=0&&mins>=-8?"LIVE":(hh?hh+"h ":"")+pad(mm)+"m"}</div><p style="margin-top:10px">Read at 00:48 and 05:20 UK time, gale warnings first, then each sea area in its fixed order. It is ${localTime("Europe/London",now)} in London.</p>`,[bbc,BY["shipping-forecast-2015"]]));
+  if(first){ const c=card("Scheduled broadcasts",mins<=0?`${esc(first.s.schedule.label)}: on air now`:`Next: ${esc(first.s.schedule.label)}`,
+    `<div class="count">${fmtMins(mins)}</div><p style="margin-top:10px">${sched.map(o=>`${esc(o.s.schedule.label)} on ${esc(o.s.title)} · ${o.m<=0?"on air now":"in "+fmtMins(o.m)}`).join("<br>")}</p>`,[...new Set(sched.map(o=>o.s).concat([BY["shipping-forecast-2015"]]).filter(Boolean))]); g.append(c) }
   g.append(card("On the greyline",grey.length?`Dawn or dusk at ${grey.length} source${grey.length>1?"s":""}`:"No sources on the line right now",
     `<p>The sun is within a few degrees of the horizon at these places. Twilight is when the ionosphere shifts and shortwave paths open and close.</p>`,grey.slice(0,6).map(o=>o.s)));
   g.append(card("After midnight there",night.length?`${night.length} live station${night.length>1?"s":""} in the small hours`:"Nowhere live is past midnight yet",
@@ -651,9 +659,9 @@ function renderIndex(){
   $("#selftest").onclick=selfTest;
 }
 async function selfTest(){ const res=$("#stres"); let done=0, bad=0; res.textContent="checking…";
-  const test=s=>new Promise(r=>{ if(s.fmt==="hls"&&!canNativeHls){ fetch(s.url,{mode:"cors"}).then(x=>x.text()).then(t=>r(t.includes("#EXTM3U"))).catch(()=>r(false)); return }
-    const a=new Audio(); a.preload="metadata"; a.muted=true; let t=setTimeout(()=>{fin(false)},12000); const fin=v=>{clearTimeout(t);a.removeAttribute("src");a.load();r(v)};
-    a.addEventListener("loadedmetadata",()=>fin(true),{once:true}); a.addEventListener("canplay",()=>fin(true),{once:true}); a.addEventListener("error",()=>fin(false),{once:true}); a.src=s.url; a.load() });
+  const test=s=>new Promise(r=>{ if(s.fmt==="hls"&&!canNativeHls){ resolveUrl(s).then(u=>fetch(u,{mode:"cors"})).then(x=>x.text()).then(t=>r(t.includes("#EXTM3U"))).catch(()=>r(false)); return }
+    resolveUrl(s).then(u=>{ const a=new Audio(); a.preload="metadata"; a.muted=true; let t=setTimeout(()=>{fin(false)},12000); const fin=v=>{clearTimeout(t);a.removeAttribute("src");a.load();r(v)};
+    a.addEventListener("loadedmetadata",()=>fin(true),{once:true}); a.addEventListener("canplay",()=>fin(true),{once:true}); a.addEventListener("error",()=>fin(false),{once:true}); a.src=u; a.load() }).catch(()=>r(false)) });
   const q=[...SRC]; const worker=async()=>{ while(q.length){ const s=q.shift(); if(state.cur&&state.cur.id===s.id){done++;continue} const ok=await test(s); LOCAL[s.id]=ok; if(!ok)bad++; done++; res.textContent=`${done}/${SRC.length} checked · ${bad} not responding`; } };
   await Promise.all([worker(),worker(),worker(),worker()]); res.textContent=`Done: ${SRC.length-bad} responded, ${bad} did not.`; $$(".row").forEach(r=>{const s=BY[r.dataset.id];const d=r.querySelector(".sdot");if(d){const st=statusOf(s);d.className="sdot "+(st==="ok"?"":st);d.title=verifiedLine(s)}}) }
 $("#q").addEventListener("input",e=>{F.q=e.target.value;renderIndex()});
@@ -667,7 +675,8 @@ window.addEventListener("hashchange",route);
 
 /* ---------- clock ---------- */
 function tick(){ const d=new Date(); $("#clock").innerHTML=`<span>UTC</span> ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}<br><span>${SRC.length||"—"} SIGNALS</span>`; }
-setInterval(tick,1000); setInterval(()=>{ if($("#v-now").classList.contains("on"))renderNow(); if($("#v-map").classList.contains("on"))renderMap() },60000);
+setInterval(tick,1000); setInterval(()=>{ if(dialMode==="live"&&marks.length!==onAirNow().length){const id=state.tuned&&state.tuned.id;dialCopy();buildDial();let i=marks.findIndex(m=>m.s.id===id);tuneTo(i<0?defaultMark():i,false)} },300000);
+setInterval(()=>{ if($("#v-now").classList.contains("on"))renderNow(); if($("#v-map").classList.contains("on"))renderMap() },60000);
 
 /* ---------- boot ---------- */
 (async function boot(){

@@ -96,7 +96,9 @@
    "mode": null,
    "recorded": null,
    "utc": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "bbc-world-service",
@@ -128,7 +130,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "noaa-kec49",
@@ -163,7 +167,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "noaa-wwg24",
@@ -198,7 +204,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "cbc-north-iqaluit",
@@ -232,7 +240,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "nrk-sapmi",
@@ -265,7 +275,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "yle-sami",
@@ -298,7 +310,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "bfbs-falklands",
@@ -331,7 +345,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "bfbs-gurkha",
@@ -363,7 +379,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "vatican-radio",
@@ -395,7 +413,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "radio-prague-intl",
@@ -426,7 +446,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "wgxc",
@@ -455,12 +477,24 @@
    "collections": [
     "art"
    ],
+   "schedule": {
+    "tz": "America/New_York",
+    "times": [
+     "15:30"
+    ],
+    "days": [
+     4
+    ],
+    "label": "Radia, the weekly radio-art exchange",
+    "tzLabel": "New York"
+   },
    "blurb": "A full-power community station in the Upper Hudson Valley run by Wave Farm, an arts organisation built around transmission art. It mixes local information with radio as an artistic medium.",
    "hear": "Anything from county news to commissioned radio art and sound experiments.",
    "recorded": null,
    "utc": null,
-   "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "standing-wave",
@@ -494,7 +528,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "resonance-extra",
@@ -527,7 +563,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "cashmere-radio",
@@ -560,7 +598,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "radio-worm",
@@ -593,7 +633,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "riafc",
@@ -626,7 +668,9 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "morseops-20",
@@ -657,7 +701,122 @@
    "recorded": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
+  },
+  {
+   "id": "knr-radio",
+   "title": "KNR — Kalaallit Nunaata Radioa",
+   "kind": "live",
+   "cat": "international",
+   "place": "Nuuk",
+   "country": "Greenland",
+   "region": "Arctic",
+   "lat": 64.181,
+   "lon": -51.694,
+   "tz": "America/Nuuk",
+   "lang": "Greenlandic · Danish",
+   "character": [
+    "voice",
+    "music"
+   ],
+   "url": "https://i1.cdn.jetstre.am:8000/sz=knr=audio192?token=ea282bc02bb373156231dd1522a33943&time=6a184ec2",
+   "fmt": "mp3",
+   "credit": "Kalaallit Nunaata Radioa",
+   "licence": "Broadcaster stream",
+   "src": "https://www.knr.gl/en/live-radio",
+   "onAir": {
+    "tz": "America/Nuuk",
+    "from": "07:00",
+    "to": "23:00"
+   },
+   "collections": [
+    "ice"
+   ],
+   "blurb": "Greenland's national public broadcaster, on air from Nuuk since 1958 and known by its Greenlandic name since 1981. It serves a country of scattered towns with no roads between them, mostly in Kalaallisut, the Greenlandic language.",
+   "hear": "Greenlandic news and talk with some Danish, and music between programmes. Its own programming runs from 07:00 to 23:00 Nuuk time.",
+   "freq": null,
+   "mode": null,
+   "recorded": null,
+   "utc": null,
+   "schedule": null,
+   "geoNote": null,
+   "resolve": null
+  },
+  {
+   "id": "sr-sapmi",
+   "title": "SR Sápmi",
+   "kind": "live",
+   "cat": "international",
+   "place": "Kiruna",
+   "country": "Sweden",
+   "region": "Arctic",
+   "lat": 67.856,
+   "lon": 20.225,
+   "tz": "Europe/Stockholm",
+   "lang": "Sámi languages · Swedish",
+   "character": [
+    "voice",
+    "music"
+   ],
+   "url": "https://www.sverigesradio.se/topsy/direkt/srapi/224.mp3",
+   "fmt": "mp3",
+   "credit": "Sveriges Radio",
+   "licence": "Broadcaster stream",
+   "src": "https://www.sverigesradio.se/sameradion",
+   "collections": [
+    "ice"
+   ],
+   "blurb": "Sveriges Radio's Sámi channel, based in Kiruna with bureaus across northern Sweden and Norway. It covers the Sámi, Sápmi and other Indigenous peoples, with Northern Sámi as the usual base language for news.",
+   "hear": "Ođđasat, the shared Nordic Sámi news, plus talk and music. With NRK Sápmi and Yle Sámi it completes the Sámi public radio of all three Nordic countries.",
+   "freq": null,
+   "mode": null,
+   "recorded": null,
+   "utc": null,
+   "schedule": null,
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
+  },
+  {
+   "id": "orcasound-lab",
+   "title": "Orcasound Lab hydrophone",
+   "kind": "stream",
+   "cat": "scientific",
+   "place": "Haro Strait, San Juan Island",
+   "country": "United States",
+   "region": "North America",
+   "lat": 48.56,
+   "lon": -123.17,
+   "tz": "America/Los_Angeles",
+   "geoNote": "Hydrophone off the west side of San Juan Island; position approximate.",
+   "lang": "—",
+   "band": null,
+   "character": [
+    "nature",
+    "noise",
+    "continuous"
+   ],
+   "url": "https://s3-us-west-2.amazonaws.com/audio-orcasound-net/rpi_orcasound_lab/hls/{latest}/live.m3u8",
+   "fmt": "hls",
+   "resolve": {
+    "latest": "https://s3-us-west-2.amazonaws.com/audio-orcasound-net/rpi_orcasound_lab/latest.txt"
+   },
+   "credit": "Orcasound cooperative, hosted by Beam Reach",
+   "licence": "Open live stream (Orcasound)",
+   "src": "https://live.orcasound.net/listen/orcasound-lab",
+   "collections": [
+    "natural"
+   ],
+   "blurb": "A live underwater microphone in the summer habitat of the endangered Southern Resident killer whales, running since 2002. Volunteers and detection software listen around the clock and raise the alarm when whales are heard.",
+   "hear": "Mostly the sea: waves, the drone of ships in the shipping lane and boats along the shore. Now and then, orca calls, clicks or humpback song.",
+   "freq": null,
+   "mode": null,
+   "recorded": null,
+   "utc": null,
+   "schedule": null,
+   "onAir": null
   },
   {
    "id": "lincolnshire-poacher",
@@ -692,7 +851,9 @@
    "freq": null,
    "recorded": null,
    "utc": null,
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "swedish-rhapsody",
@@ -727,7 +888,9 @@
    "freq": null,
    "recorded": null,
    "utc": null,
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "hm01",
@@ -762,7 +925,9 @@
    ],
    "blurb": "Still heard regularly when this was recorded in 2013, HM01 mixes a Spanish-speaking female voice with bursts of digital data, and is attributed to Cuba's intelligence service.",
    "hear": "A Spanish number count interleaved with warbling data bursts, recorded at 10:00 UTC on 5,855 kHz.",
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "uvb-76",
@@ -797,7 +962,9 @@
    ],
    "blurb": "A Russian military channel on 4625 kHz that has sent a short, harsh buzz day and night for decades. Occasionally the buzz stops and a voice reads a coded message.",
    "hear": "The buzz itself, captured in 2018 from the Netherlands through the University of Twente's web receiver.",
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "usaf-eam",
@@ -832,7 +999,9 @@
    ],
    "blurb": "The US Air Force's High Frequency Global Communications System passes encrypted Emergency Action Messages to aircraft, ground stations and some ships. Their meaning is classified; listeners log them by the hundred.",
    "hear": "An operator reading a long string of phonetic letters and numbers on 8,992 kHz, just before 05:00 UTC.",
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "afan-mcmurdo",
@@ -866,7 +1035,9 @@
    "hear": "A forces radio programme from the bottom of the world, faint and wavering across the Southern Ocean.",
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "chu-canada",
@@ -901,7 +1072,9 @@
    "blurb": "Canada's official shortwave time station, broadcasting from Ottawa at 10 kW. Every minute it announces the time in English and French.",
    "hear": "Ticks each second and a bilingual voice announcement, heard here from Sydney, Australia.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "wwvh",
@@ -936,7 +1109,9 @@
    "freq": null,
    "mode": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "shannon-volmet",
@@ -970,7 +1145,9 @@
    "blurb": "VOLMET is aviation's round-the-clock weather broadcast for aircraft in flight. Shannon's serves transatlantic crews in the Shanwick oceanic area of the north-east Atlantic.",
    "hear": "A measured voice reading SIGMET warnings and airport conditions across Europe, recorded in Dublin.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "gander-volmet",
@@ -1004,7 +1181,9 @@
    "hear": "New York and then Gander reading airport weather, a routine message heard thousands of miles from its intended crews.",
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "shipping-forecast-2015",
@@ -1040,7 +1219,9 @@
    "blurb": "The late Shipping Forecast caught on longwave from the 500 kW Droitwich transmitter, the way it was meant to be heard at sea.",
    "hear": "'Sailing By', the forecast, the national anthem closing Radio 4's day, and the six pips, under a little static.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "bollettino-1977",
@@ -1073,7 +1254,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "uscg-nmc",
@@ -1107,7 +1290,9 @@
    "freq": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "night-of-nights",
@@ -1141,7 +1326,9 @@
    "freq": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "prinsendam-sos",
@@ -1175,7 +1362,9 @@
    "freq": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "lra36",
@@ -1208,7 +1397,9 @@
    "blurb": "Argentina's radio station on the Antarctic Peninsula, one of the hardest catches on the shortwave dial. Its 10 kW signal was usually buried in noise when it reached the northern hemisphere.",
    "hear": "Spanish announcements with the station ID, frequency and power, logged after many attempts in Ontario.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "bbc-midwinter-2023",
@@ -1243,7 +1434,9 @@
    "blurb": "Once a year on the winter solstice, the BBC World Service sends a half-hour of shortwave to the British Antarctic Survey staff wintering in the dark. In 2023 there were 37 of them.",
    "hear": "Messages from families and friends, music requests and a test tone before the transmitter opens.",
    "freq": null,
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "ham-palmer-1974",
@@ -1276,7 +1469,9 @@
    "freq": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "svalbard-storm",
@@ -1309,7 +1504,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "pyramiden",
@@ -1342,7 +1539,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "radio-pyongyang-1975",
@@ -1376,7 +1575,9 @@
    "hear": "Martial music and long tributes to the leadership, delivered in formal English.",
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "voice-of-korea-2024",
@@ -1410,7 +1611,9 @@
    "blurb": "The same station half a century on, now called Voice of Korea and still broadcasting on shortwave. These recent captures were made through a web receiver in Japan.",
    "hear": "A collection of early-2024 English broadcasts, little changed in tone from the 1970s.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "kcbs-sinuiju",
@@ -1443,7 +1646,9 @@
    "blurb": "North Korea's domestic Korean Central Broadcasting Station, relayed on 250 kW medium wave from the Chinese border and heard 3,500 miles away in McGrath, Alaska.",
    "hear": "Instrumental North Korean music holding up for more than six minutes across the Bering region.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "furusato-no-kaze",
@@ -1477,7 +1682,9 @@
    ],
    "blurb": "'Hometown Wind', a Japanese government programme meant for Japanese citizens abducted by North Korea who may still be alive there. It goes out by shortwave because almost nothing else gets in.",
    "hear": "Gentle Japanese speech and music for listeners who may never be able to reply, heard in London from a 100 kW transmitter in Palau.",
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "tibet-pbs",
@@ -1511,7 +1718,9 @@
    "blurb": "The regional broadcaster of Lhasa on the 60-metre tropical band, heard from Pennsylvania at the top of the hour.",
    "hear": "Time pips and a station identification that includes English.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "voice-of-mongolia",
@@ -1545,7 +1754,9 @@
    "blurb": "Mongolia's external service broadcasting in English to South-East Asia at 250 kW from Khonkhor, outside Ulaanbaatar.",
    "hear": "Interval signal, sign-on, news, a commentary on climate change in Mongolia, music and sign-off, heard in Sydney.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "france-inter-lw",
@@ -1579,7 +1790,9 @@
    "blurb": "The last hour of France Inter on longwave, broadcast on New Year's Eve 2016 from the 2,000 kW Allouis transmitter near Bourges.",
    "hear": "The 23:00 CET time tones, a news bulletin and an end-of-year music show, until the frequency falls silent.",
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "radio-australia-2000",
@@ -1613,7 +1826,9 @@
    "freq": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "interval-signals-1991",
@@ -1648,7 +1863,9 @@
    "freq": null,
    "mode": null,
    "utc": null,
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "loma-prieta-kgo",
@@ -1679,7 +1896,9 @@
    "collections": [],
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "dawn-chorus-alberta",
@@ -1713,7 +1932,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "whistlers-london",
@@ -1747,7 +1968,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "alaska-chorus",
@@ -1782,7 +2005,9 @@
    "freq": null,
    "mode": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "omega-tones",
@@ -1817,7 +2042,9 @@
    "freq": null,
    "mode": null,
    "utc": null,
-   "schedule": null
+   "schedule": null,
+   "onAir": null,
+   "resolve": null
   },
   {
    "id": "voyager-jupiter",
@@ -1850,7 +2077,9 @@
    "mode": null,
    "utc": null,
    "schedule": null,
-   "geoNote": null
+   "geoNote": null,
+   "onAir": null,
+   "resolve": null
   }
  ]
 }

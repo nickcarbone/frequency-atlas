@@ -69,6 +69,14 @@ Run these checks and report the raw results:
 
 Anything that fails a step is rejected. Keep the rejection and its reason, because I want to learn from the failures.
 
+**Lessons from earlier rounds:**
+- **Never propose a stream URL you haven't fetched yourself.** Earlier drafts invented plausible addresses for real stations and named a station that doesn't exist.
+- **A 403, a "reserve" redirect or an unreachable port may be your network, not the station.** Some broadcasters block data-centre addresses, and some proxies can't reach port 8000. Before rejecting, ask me to test the URL on my phone, and record it as "unverified" rather than "dead".
+- **Tokens in a URL aren't automatically fatal.** Check Radio Browser's `lastchecktime` and `lastchangetime` for the same URL. If the token has been stable for months, it's usable.
+- **Check broadcast hours.** Some stations only broadcast part of the day. Record them in `onAir`, with the times in the station's own time zone, so the live dial shows the station only while it's broadcasting.
+- **Rotating paths can be resolved.** Some sources publish a pointer to the current stream folder (Orcasound's `latest.txt`). Use `resolve` rather than rejecting.
+- **A video embed (YouTube, camera platforms) isn't an audio source.** Route those ideas to a video project instead.
+
 ## 5. Editorial rules
 
 - **Frequency:** include one only if the broadcaster, a regulator (FCC, Ofcom, CRTC, ITU and so on) or a reliable reference publishes it for that transmitter. Otherwise give only the band (VLF, LW, MW, SW, VHF) or leave it empty. Never estimate.
@@ -98,7 +106,12 @@ Return four things:
    schedule (optional {tz, times[], label}), url,
    fmt ("mp3" | "aac" | "hls"), credit, licence ("Broadcaster stream" or the
         stated terms), src (official page), collections (array of existing
-        collection ids or a proposed new one), blurb, hear
+        collection ids or a proposed new one), blurb, hear,
+   onAir (optional {tz, from: "HH:MM", to: "HH:MM"} for stations with broadcast hours),
+   resolve (optional {latest: URL of a text file whose contents replace
+        "{latest}" in url}),
+   schedule (optional {tz, times[], days[] with 0 = Sunday, label, tzLabel}
+        for a recurring programme worth a countdown)
    ```
 
    Add any new `region` or `collections` values to the lists above.
