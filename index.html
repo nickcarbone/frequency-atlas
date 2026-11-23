@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>The Frequency Atlas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="An observatory of the world's unusual radio: numbers stations, polar broadcasts, time signals, natural radio and transmission art.">
+<meta name="theme-color" content="#0a0a09">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Frequency Atlas">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a09; --bg2:#0f0f0d; --panel:#13130f; --panel2:#181814;
+  --line:rgba(236,226,204,.08); --line2:rgba(236,226,204,.15);
+  --ink:#ece6d8; --ink2:#b9b2a2; --mute:#7f7a6d; --faint:#4b4840;
+  --gold:#d6b46e; --gold2:#a88a4f; --goldglow:rgba(214,180,110,.35);
+  --k-live:#e3bd72; --k-stream:#d4b896; --k-offair:#9db6c6; --k-field:#a9b897; --k-archive:#bea9c6;
+  --serif:"Instrument Serif","Iowan Old Style","Palatino",Georgia,serif;
+  --sans:"IBM Plex Sans",-apple-system,"Helvetica Neue",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  --playerH:76px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{min-height:100vh;padding-bottom:calc(var(--playerH) + var(--sab) + 8px);
+  background:radial-gradient(1200px 600px at 50% -200px,rgba(214,180,110,.06),transparent 70%),var(--bg)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 0%,#000 0%,transparent 75%)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+a{color:var(--gold);text-decoration:none}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 18px}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+
+/* Header */
+header.top{position:sticky;top:0;z-index:20;padding-top:var(--sat);
+  background:linear-gradient(var(--bg) 70%,rgba(10,10,9,0));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 10px}
+.mark{display:flex;align-items:center;gap:11px}
+.mark svg{width:26px;height:26px;flex:none}
+.mark .wm{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink)}
+.mark .wm b{font-weight:500;color:var(--gold)}
+.clock{font-family:var(--mono);font-size:11px;color:var(--ink2);letter-spacing:.08em;text-align:right;line-height:1.35}
+.clock span{color:var(--mute)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px;border-bottom:1px solid var(--line)}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);padding:8px 12px;border-radius:999px;white-space:nowrap;transition:color .2s,background .2s}
+nav.tabs button[aria-selected=true]{color:var(--bg);background:var(--gold)}
+nav.tabs button:not([aria-selected=true]):hover{color:var(--ink)}
+
+main section.view{display:none;animation:fade .45s ease}
+main section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;margin:0}
+.lede{font-family:var(--serif);font-size:clamp(30px,7.2vw,58px);line-height:1.02;margin:26px 0 8px;max-width:16ch}
+.lede em{color:var(--gold);font-style:italic}
+.sub{color:var(--ink2);font-size:14.5px;line-height:1.55;max-width:58ch;margin:0 0 18px}
+
+/* Dial */
+.dialbox{position:relative;margin:18px -18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(214,180,110,.035),transparent 40%,rgba(0,0,0,.25))}
+.readout{display:flex;align-items:flex-end;justify-content:space-between;padding:14px 18px 6px;gap:12px}
+.readout .f{font-family:var(--mono);font-weight:300;font-size:clamp(28px,8vw,46px);letter-spacing:.02em;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.readout .f small{font-size:.38em;color:var(--mute);letter-spacing:.14em;margin-left:6px}
+.readout .bandname{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;text-align:right;line-height:1.6}
+.track{position:relative;height:178px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+.track::-webkit-scrollbar{display:none}
+.track:active{cursor:grabbing}
+.track svg{display:block;height:178px}
+.needle{position:absolute;left:50%;top:58px;bottom:48px;width:1px;background:var(--gold);box-shadow:0 0 12px var(--goldglow),0 0 2px var(--gold);pointer-events:none;z-index:2}
+.needle::before{content:"";position:absolute;top:-7px;left:-5px;border:5px solid transparent;border-top:7px solid var(--gold)}
+.dialfade{position:absolute;top:58px;bottom:48px;width:18%;pointer-events:none;z-index:1}
+.dialfade.l{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.dialfade.r{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.stepper{display:flex;justify-content:space-between;align-items:center;padding:8px 18px 12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase}
+.stepper button{display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--ink2)}
+.stepper button:hover{color:var(--gold)}
+.mk{cursor:pointer}
+.mk line{transition:stroke .2s}
+.mk.near line{stroke:var(--gold)!important}
+.pulse{animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* Tuned card */
+.tuned{display:grid;grid-template-columns:1fr;gap:16px;padding:22px 0 8px}
+.tuned .k{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tuned h2{font-size:clamp(30px,7vw,46px);line-height:1.04;margin:10px 0 6px}
+.tuned .where{font-family:var(--mono);font-size:12px;color:var(--ink2);letter-spacing:.04em}
+.tuned p{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:12px 0 0;max-width:62ch}
+.tuned .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;padding:13px 18px;border-radius:999px;border:1px solid var(--line2);color:var(--ink);transition:all .2s}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.primary{background:var(--gold);color:#16130c;border-color:var(--gold)}
+.btn.primary:hover{background:#e3c482;color:#16130c}
+.btn svg{width:14px;height:14px}
+
+.kind{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;padding:5px 9px 5px 8px;border-radius:999px;border:1px solid currentColor;line-height:1;white-space:nowrap}
+.kind i{width:6px;height:6px;border-radius:50%;background:currentColor;display:block}
+.kind.live i,.kind.stream i{animation:pulse 2s ease-in-out infinite}
+.k-live{color:var(--k-live)} .k-stream{color:var(--k-stream)} .k-offair{color:var(--k-offair)} .k-field{color:var(--k-field)} .k-archive{color:var(--k-archive)}
+.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);border:1px solid var(--line2);border-radius:999px;padding:5px 9px;line-height:1}
+
+.specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:18px}
+.specs div{background:var(--bg2);padding:11px 13px}
+.specs dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.specs dd{margin:0;font-family:var(--mono);font-size:12.5px;color:var(--ink);word-break:break-word}
+
+/* Section heads */
+.shead{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin:38px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.shead h3{font-size:26px}
+.shead .eyebrow{white-space:nowrap}
+
+/* Lists */
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:86px 1fr auto;gap:12px;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);text-align:left;width:100%;transition:background .2s}
+.row:hover{background:rgba(214,180,110,.04)}
+.row .fq{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.04em;line-height:1.3}
+.row .fq span{display:block;color:var(--mute);font-size:9.5px;letter-spacing:.16em;margin-top:2px}
+.row .t{font-family:var(--serif);font-size:20px;line-height:1.12}
+.row .m{font-family:var(--mono);font-size:10.5px;color:var(--mute);letter-spacing:.04em;margin-top:3px}
+.row .r{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.row .km{display:none}
+@media (max-width:640px){.row .r .kind{display:none}.row .km{display:inline}.row{grid-template-columns:72px 1fr auto}}
+.row.playing .t{color:var(--gold)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--k-field);opacity:.8}
+.sdot.bad{background:#c8735f}
+.sdot.unk{background:var(--faint)}
+
+/* Now view */
+.nowgrid{display:grid;grid-template-columns:1fr;gap:14px}
+.card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--panel),var(--bg2));padding:18px}
+.card .eyebrow{margin-bottom:8px;display:block}
+.card h4{font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.1;margin:0 0 6px}
+.card p{margin:0;color:var(--ink2);font-size:14px;line-height:1.55}
+.card .rows{margin-top:10px}
+.card .row{grid-template-columns:70px 1fr auto}
+.count{font-family:var(--mono);font-size:44px;font-weight:300;color:var(--gold);line-height:1}
+
+/* Map */
+.mapbox{position:relative;margin:18px -18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:#0c0c0a;overflow:hidden}
+.mapbox svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:7px 11px;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip b{font-weight:400;color:var(--mute);margin-left:5px}
+.chip[aria-pressed=true] b{color:#6b665a}
+.chiprow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:8px -18px;padding:0 18px}
+.chiprow::-webkit-scrollbar{display:none}
+
+/* Collections */
+.colls{display:grid;grid-template-columns:1fr;gap:12px}
+.coll{position:relative;text-align:left;border:1px solid var(--line);border-radius:18px;padding:20px;background:linear-gradient(160deg,var(--panel2),var(--bg2));overflow:hidden;transition:border-color .25s}
+.coll:hover{border-color:var(--gold2)}
+.coll .n{font-family:var(--mono);font-size:10.5px;color:var(--gold);letter-spacing:.2em}
+.coll h4{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.05;margin:10px 0 8px}
+.coll p{margin:0;color:var(--ink2);font-size:14px;line-height:1.5}
+.coll .pl{margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--mute);letter-spacing:.06em;line-height:1.6}
+.coll svg.wave{position:absolute;right:-10px;top:14px;width:140px;opacity:.18}
+
+/* Search */
+.search{display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:999px;padding:11px 16px;margin:20px 0 4px}
+.search input{flex:1;background:none;border:0;outline:none;color:var(--ink);font-family:var(--mono);font-size:13px}
+.search input::placeholder{color:var(--mute)}
+.foot{margin:44px 0 20px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--mute);line-height:1.8;letter-spacing:.03em}
+.foot button{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+
+/* Sheet */
+dialog.sheet{position:fixed;inset:auto 0 0 0;margin:0;width:100%;max-width:100%;max-height:88vh;border:0;padding:0;background:transparent;color:var(--ink)}
+dialog.sheet::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+dialog.sheet[open]{animation:up .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sheetin{background:linear-gradient(180deg,#171713,#0e0e0c);border-top:1px solid var(--line2);border-radius:22px 22px 0 0;padding:10px 20px calc(26px + var(--sab));max-height:88vh;overflow-y:auto}
+.grab{width:38px;height:4px;border-radius:9px;background:var(--line2);margin:4px auto 14px}
+.sheet h2{font-size:clamp(32px,8vw,46px);line-height:1.02;margin:12px 0 6px}
+.sheet .hear{margin-top:18px;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(214,180,110,.05);border-radius:0 12px 12px 0}
+.sheet .hear .eyebrow{display:block;margin-bottom:6px;color:var(--gold)}
+.sheet .hear p{margin:0;font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.35;color:var(--ink)}
+.sheet .geo{font-family:var(--mono);font-size:10.5px;color:var(--mute);margin-top:8px}
+.sheet .credit{font-family:var(--mono);font-size:10.5px;color:var(--mute);line-height:1.7;margin-top:16px}
+.close{position:absolute;right:16px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--ink2)}
+
+/* Player */
+.player{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:0 10px calc(10px + var(--sab))}
+.pin{max-width:1180px;margin:0 auto;height:var(--playerH);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:0 10px 0 14px;
+  border:1px solid var(--line2);border-radius:20px;background:rgba(19,19,15,.86);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);box-shadow:0 18px 50px rgba(0,0,0,.55);position:relative;overflow:hidden}
+.prog{position:absolute;left:0;right:0;top:0;height:2px;background:transparent}
+.prog i{display:block;height:100%;width:0;background:var(--gold);box-shadow:0 0 8px var(--goldglow)}
+.prog input{position:absolute;inset:-6px 0;width:100%;opacity:0;cursor:pointer}
+.sig{width:40px;height:28px}
+.pinfo{min-width:0;cursor:pointer}
+.pinfo .pt{font-family:var(--serif);font-size:18px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pinfo .pm{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.pinfo .pm b{font-weight:400;color:var(--gold)}
+.pctl{display:flex;align-items:center;gap:6px}
+.ib{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ink2)}
+.ib:hover{color:var(--gold)}
+.ib svg{width:18px;height:18px}
+.pp{width:48px;height:48px;border-radius:50%;background:var(--gold);color:#16130c;display:grid;place-items:center}
+.pp svg{width:18px;height:18px}
+.pp[disabled]{opacity:.35}
+.vol{width:90px;accent-color:var(--gold);display:none}
+@media (min-width:760px){
+  .wrap{padding:0 32px}
+  .dialbox,.mapbox{margin-left:-32px;margin-right:-32px}
+  .readout,.stepper{padding-left:32px;padding-right:32px}
+  .tuned{grid-template-columns:1.25fr 1fr;gap:40px;align-items:start}
+  .nowgrid{grid-template-columns:1fr 1fr}
+  .colls{grid-template-columns:1fr 1fr}
+  .row{grid-template-columns:110px 1fr auto}
+  .vol.can{display:block}
+  dialog.sheet{inset:0 0 0 auto;width:min(520px,100%);height:100%;max-height:100%}
+  .sheetin{height:100%;max-height:100%;border-radius:0;border-top:0;border-left:1px solid var(--line2);padding-top:28px}
+  .grab{display:none}
+  dialog.sheet[open]{animation:side .38s cubic-bezier(.2,.8,.2,1)}
+  @keyframes side{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+}
+@media (min-width:1100px){.colls{grid-template-columns:1fr 1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.toast{position:fixed;left:50%;bottom:calc(var(--playerH) + var(--sab) + 24px);transform:translateX(-50%);z-index:40;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <div class="mark">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="#d6b46e" stroke-width=".8" opacity=".6"/><circle cx="16" cy="16" r="10" fill="none" stroke="#d6b46e" stroke-width=".8" opacity=".35"/><path d="M3 16 Q7 8 10 16 T16 16 T22 16 T29 16" fill="none" stroke="#d6b46e" stroke-width="1.2"/><circle cx="16" cy="16" r="1.6" fill="#d6b46e"/></svg>
+        <div class="wm">The <b>Frequency</b> Atlas</div>
+      </div>
+      <div class="clock mono" id="clock"><span>UTC</span> --:--:--</div>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-v="dial" aria-selected="true">Dial</button>
+      <button role="tab" data-v="now" aria-selected="false">Now</button>
+      <button role="tab" data-v="map" aria-selected="false">Map</button>
+      <button role="tab" data-v="collections" aria-selected="false">Collections</button>
+      <button role="tab" data-v="index" aria-selected="false">Index</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- DIAL -->
+  <section class="view on" id="v-dial">
+    <div class="wrap">
+      <h1 class="lede">Tune across the world's <em>invisible</em> radio.</h1>
+      <p class="sub" id="dialsub">Swipe the dial from very low frequency to VHF. Every mark is a real, verified source you can hear in this page. Signals with no logged frequency sit at the far end, off the dial.</p>
+      <div class="dialbox">
+        <div class="readout">
+          <div class="f" id="rf">— <small>kHz</small></div>
+          <div class="bandname" id="rb">—</div>
+        </div>
+        <div class="track" id="track" aria-label="Frequency dial"></div>
+        <div class="needle"></div>
+        <div class="dialfade l"></div><div class="dialfade r"></div>
+        <div class="stepper">
+          <button id="prev" aria-label="Previous signal"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M9 2 4 7l5 5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>Prev</button>
+          <span id="pos">— / —</span>
+          <button id="next" aria-label="Next signal">Next<svg width="14" height="14" viewBox="0 0 14 14"><path d="m5 2 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg></button>
+        </div>
+      </div>
+      <div class="tuned" id="tuned"></div>
+    </div>
+  </section>
+
+  <!-- NOW -->
+  <section class="view" id="v-now">
+    <div class="wrap">
+      <h1 class="lede" id="nowlede">Listening by the <em>clock</em>.</h1>
+      <p class="sub">Discovery here follows the sun and the hour. Shortwave changes with the day–night line, so the Atlas surfaces what is at dawn, dusk or deep night where it comes from, and what was recorded at this hour of the UTC day.</p>
+      <div class="nowgrid" id="nowgrid"></div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="view" id="v-map">
+    <div class="wrap">
+      <h1 class="lede">Where the <em>signals</em> come from.</h1>
+      <p class="sub">The shaded side of the map is in night right now; the thin band at its edge is the greyline, where long-distance shortwave often comes alive. Tap a point to open it.</p>
+      <div class="mapbox" id="mapbox"></div>
+      <div class="legend" id="legend"></div>
+      <div id="regions"></div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section class="view" id="v-collections">
+    <div class="wrap">
+      <h1 class="lede">Collections, <em>curated</em>.</h1>
+      <p class="sub">Editorial sets drawn only from verified sources. A source can belong to more than one.</p>
+      <div class="colls" id="colls"></div>
+      <div id="collopen"></div>
+    </div>
+  </section>
+
+  <!-- INDEX -->
+  <section class="view" id="v-index">
+    <div class="wrap">
+      <h1 class="lede">The <em>index</em>.</h1>
+      <div class="search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#7f7a6d" stroke-width="1.3"><circle cx="6" cy="6" r="4.5"/><path d="m9.5 9.5 3 3"/></svg><input id="q" type="search" placeholder="Search station, place, language, kHz" autocomplete="off"></div>
+      <div class="chiprow" id="fcat"></div>
+      <div class="chiprow" id="fkind"></div>
+      <div class="chiprow" id="fchar"></div>
+      <div class="rows" id="list"></div>
+      <div class="foot" id="foot"></div>
+    </div>
+  </section>
+</main>
+
+<dialog class="sheet" id="sheet"><div class="sheetin" id="sheetin"></div></dialog>
+
+<div class="player" id="player">
+  <div class="pin">
+    <div class="prog" id="prog"><i></i><input type="range" min="0" max="1000" value="0" id="seek" aria-label="Seek" hidden></div>
+    <svg class="sig" id="sig" viewBox="0 0 40 28" aria-hidden="true"><path id="sigp" d="M0 14 H40" fill="none" stroke="#d6b46e" stroke-width="1.2" opacity=".5"/></svg>
+    <div class="pinfo" id="pinfo"><div class="pt" id="pt">Nothing tuned</div><div class="pm" id="pm">Choose a signal to begin listening</div></div>
+    <div class="pctl">
+      <input class="vol" id="vol" type="range" min="0" max="1" step="0.01" value="0.9" aria-label="Volume">
+      <button class="ib" id="mute" aria-label="Mute"></button>
+      <button class="pp" id="pp" aria-label="Play" disabled><svg viewBox="0 0 18 18"><path d="M5 3.5v11l9-5.5z" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<audio id="au" preload="none" playsinline></audio>
+
+<script src="land.js"></script>
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const el=(t,a={},...c)=>{const e=document.createElement(t);for(const k in a){if(k==="class")e.className=a[k];else if(k==="html")e.innerHTML=a[k];else if(k.startsWith("on"))e.addEventListener(k.slice(2),a[k]);else e.setAttribute(k,a[k])}c.flat().forEach(x=>x!=null&&e.append(x));return e};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const KIND={live:"Live · on air",stream:"Live · online",offair:"Off-air recording",field:"Field recording",archive:"Archive"};
+const ICON={
+ play:'<svg viewBox="0 0 18 18"><path d="M5 3.5v11l9-5.5z" fill="currentColor"/></svg>',
+ pause:'<svg viewBox="0 0 18 18"><rect x="4.5" y="3.5" width="3" height="11" fill="currentColor"/><rect x="10.5" y="3.5" width="3" height="11" fill="currentColor"/></svg>',
+ load:'<svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="9 30"><animateTransform attributeName="transform" type="rotate" from="0 9 9" to="360 9 9" dur="1s" repeatCount="indefinite"/></circle></svg>',
+ vol:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor" stroke="none"/><path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.5 6.5 0 0 1 0 9"/></svg>',
+ mute:'<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 7h3l4-3v10l-4-3H3z" fill="currentColor" stroke="none"/><path d="m12 7 4 4m0-4-4 4"/></svg>',
+ x:'<svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" stroke-width="1.3"><path d="m2 2 8 8M10 2l-8 8"/></svg>',
+ share:'<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M7 1v8M4 4l3-3 3 3M2 8v4h10V8"/></svg>'
+};
+let DATA, SRC=[], BY={}, STATUS={results:{}}, LOCAL={};
+const state={cur:null,tuned:null,queue:[]};
+
+/* ---------- time & sun ---------- */
+const pad=n=>String(n).padStart(2,"0");
+function localTime(tz,d=new Date()){try{return new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(d)}catch(e){return "—"}}
+function localHour(tz,d=new Date()){try{return +new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",hour12:false}).format(d)%24}catch(e){return null}}
+function sun(d=new Date()){ // NOAA approximations
+  const rad=Math.PI/180, start=Date.UTC(d.getUTCFullYear(),0,1);
+  const doy=(d-start)/864e5, hr=d.getUTCHours()+d.getUTCMinutes()/60+d.getUTCSeconds()/3600;
+  const g=2*Math.PI/365*(doy-1+(hr-12)/24);
+  const eqt=229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g));
+  const dec=0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g);
+  const subLon=-(hr*60+eqt-720)/4; return {dec,subLon,rad};
+}
+function elevation(lat,lon,d=new Date()){const {dec,subLon,rad}=sun(d);const H=(lon-subLon)*rad;
+  return Math.asin(Math.sin(lat*rad)*Math.sin(dec)+Math.cos(lat*rad)*Math.cos(dec)*Math.cos(H))/rad}
+
+/* ---------- frequency parsing ---------- */
+function parseFreq(s){ if(!s.freq)return null; const m=s.freq.match(/([\d.,]+)/); const u=s.freq.match(/(kHz|MHz|GHz)/i); if(!m||!u)return null;
+  let v=parseFloat(m[1].replace(/,/g,"")); const unit=u[1].toLowerCase(); return unit==="mhz"?v*1e3:unit==="ghz"?v*1e6:v; } // kHz
+const BANDS=[{k:"VLF",lo:3,hi:30,w:1,name:"Very low frequency"},{k:"LW",lo:30,hi:300,w:1,name:"Longwave"},{k:"MW",lo:300,hi:3000,w:1.25,name:"Medium wave"},{k:"SW",lo:3000,hi:30000,w:3.4,name:"Shortwave"},{k:"VHF",lo:30000,hi:300000,w:1.1,name:"Very high frequency"},{k:"NET",w:2.6,name:"Off the dial"}];
+function bandOf(s){const b=(s.band||"").toUpperCase();if(b==="HF"||b==="MF/HF")return "SW";if(BANDS.some(x=>x.k===b))return b;return null}
+function fmtF(k){ if(k==null)return "—"; if(k>=30000)return {v:(k/1000).toFixed(3),u:"MHz"}; return {v:k<100?k.toFixed(1):String(Math.round(k)),u:"kHz"} }
+const tickLab=k=>k>=1000?(k/1000)+"M":k+"k";
+
+/* ---------- status ---------- */
+function statusOf(s){ if(LOCAL[s.id]!=null) return LOCAL[s.id]?"ok":"bad"; const r=STATUS.results&&STATUS.results[s.id]; if(!r)return "unk"; return r.ok?"ok":"bad"}
+function verifiedLine(s){ const st=statusOf(s), d=STATUS.checked?new Date(STATUS.checked):null; const ds=d?d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):null;
+  if(LOCAL[s.id]!=null) return LOCAL[s.id]?"Responded to a check from this device just now":"Did not respond to a check from this device";
+  if(st==="ok") return ds?`Verified working ${ds}`:"Verified"; if(st==="bad") return ds?`Failed the weekly check on ${ds}`:"Failed last check"; return "Not yet checked"}
+
+/* ---------- player ---------- */
+const au=$("#au"); let hls=null, hlsLoading=null;
+const canNativeHls=!!au.canPlayType("application/vnd.apple.mpegurl");
+const volWorks=(()=>{const a=document.createElement("audio");a.volume=.5;return a.volume===.5&&!/iPad|iPhone|iPod/.test(navigator.userAgent)})();
+if(volWorks)$("#vol").classList.add("can");
+function loadHls(){ if(window.Hls)return Promise.resolve(); if(hlsLoading)return hlsLoading;
+  hlsLoading=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/hls.js@1.7.4/dist/hls.min.js";s.onload=res;s.onerror=rej;document.head.append(s)}); return hlsLoading}
+let pstate="idle";
+function setP(st,msg){ pstate=st; $("#pp").innerHTML=st==="playing"?ICON.pause:st==="loading"?ICON.load:ICON.play; $("#pp").setAttribute("aria-label",st==="playing"?"Pause":"Play");
+  const s=state.cur; if(!s)return; const k=s.kind;
+  const lab={idle:"Ready",loading:"Acquiring signal",playing:(k==="live"||k==="stream")?"Receiving":"Playing",paused:"Paused",error:"No signal"}[st];
+  $("#pm").innerHTML=`<b>${esc(msg||lab)}</b> · ${esc(s.place)}${s.freq?" · "+esc(s.freq):""}`; renderRows(); }
+async function play(s){
+  if(state.cur&&state.cur.id===s.id){ if(au.paused){ resume(); } return; }
+  state.cur=s; $("#pp").disabled=false; $("#pt").textContent=s.title;
+  if(hls){hls.destroy();hls=null}
+  au.removeAttribute("src"); au.load();
+  setP("loading");
+  const isFile=!(s.kind==="live"||s.kind==="stream");
+  $("#seek").hidden=!isFile; $("#prog i").style.width="0";
+  try{
+    if(s.fmt==="hls"&&!canNativeHls){ await loadHls(); if(!window.Hls||!Hls.isSupported())throw new Error("HLS unsupported");
+      hls=new Hls({lowLatencyMode:false}); hls.attachMedia(au); hls.loadSource(s.url);
+      hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setP("error","No signal");LOCAL[s.id]=false}});
+    } else { au.src=s.url; }
+    au.volume=+$("#vol").value; await au.play();
+  }catch(e){ if(e&&e.name==="NotAllowedError"){setP("paused","Tap play to start")} else if(e&&e.name!=="AbortError"){setP("error","No signal");} }
+  mediaSession(s); renderRows(); if(state.tuned&&state.tuned.id===s.id) renderTuned(s);
+}
+function resume(){ const s=state.cur; if(!s)return; if(s.kind==="live"||s.kind==="stream"){ // rejoin live edge
+    if(hls){hls.startLoad(-1); if(hls.liveSyncPosition)au.currentTime=hls.liveSyncPosition} else if(au.currentSrc){ au.src=s.url; } }
+  setP("loading"); au.play().catch(()=>setP("paused")); }
+function toggle(){ if(!state.cur)return; if(au.paused||pstate==="error"){ if(pstate==="error"){const s=state.cur;state.cur=null;play(s)} else resume(); } else { au.pause(); setP("paused"); if(hls&&(state.cur.kind==="live"||state.cur.kind==="stream"))hls.stopLoad(); } }
+au.addEventListener("playing",()=>{setP("playing"); if(state.cur)LOCAL[state.cur.id]=true});
+au.addEventListener("waiting",()=>{if(!au.paused)setP("loading","Buffering")});
+au.addEventListener("pause",()=>{if(pstate!=="error"&&pstate!=="loading")setP("paused")});
+au.addEventListener("error",()=>{ if(!au.getAttribute("src"))return; setP("error","No signal — source did not respond"); if(state.cur)LOCAL[state.cur.id]=false; });
+au.addEventListener("ended",()=>{ setP("paused","Finished"); });
+au.addEventListener("timeupdate",()=>{ const s=state.cur; if(!s||s.kind==="live"||s.kind==="stream"||!isFinite(au.duration))return; const p=au.currentTime/au.duration; $("#prog i").style.width=(p*100)+"%"; $("#seek").value=Math.round(p*1000);
+  if(pstate==="playing"){ $("#pm").innerHTML=`<b>${fmtT(au.currentTime)} / ${fmtT(au.duration)}</b> · ${esc(s.place)}${s.freq?" · "+esc(s.freq):""}`} });
+const fmtT=t=>{t=Math.floor(t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60;return (h?h+":"+pad(m):m)+":"+pad(s)};
+$("#seek").addEventListener("input",e=>{ if(isFinite(au.duration)) au.currentTime=au.duration*e.target.value/1000 });
+$("#pp").addEventListener("click",toggle);
+$("#mute").innerHTML=ICON.vol; $("#mute").addEventListener("click",()=>{au.muted=!au.muted;$("#mute").innerHTML=au.muted?ICON.mute:ICON.vol;$("#mute").setAttribute("aria-label",au.muted?"Unmute":"Mute")});
+$("#vol").addEventListener("input",e=>{au.volume=+e.target.value; if(au.muted&&au.volume>0){au.muted=false;$("#mute").innerHTML=ICON.vol}});
+$("#pinfo").addEventListener("click",()=>state.cur&&openSheet(state.cur));
+function step(dir){ const q=state.queue.length?state.queue:SRC; const i=q.findIndex(x=>state.cur&&x.id===state.cur.id); const n=q[(i+dir+q.length)%q.length]; if(n)play(n) }
+function mediaSession(s){ if(!("mediaSession" in navigator))return;
+  navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:[s.place,s.freq].filter(Boolean).join(" · "),album:"The Frequency Atlas · "+KIND[s.kind],artwork:[{src:"icons/icon-512.png",sizes:"512x512",type:"image/png"}]});
+  const ms=navigator.mediaSession; ms.setActionHandler("play",()=>resume()); ms.setActionHandler("pause",()=>au.pause());
+  try{ms.setActionHandler("previoustrack",()=>step(-1));ms.setActionHandler("nexttrack",()=>step(1));}catch(e){}
+  try{ms.setActionHandler("seekto",(s.kind==="live"||s.kind==="stream")?null:(d=>{au.currentTime=d.seekTime}))}catch(e){} }
+// Signal glyph: an ornament that responds to playback state only. It is not a measurement of the audio.
+let ph=0; (function anim(){ ph+=.06; const amp=pstate==="playing"?6:pstate==="loading"?2.5:0.4; let d="M0 14"; for(let x=0;x<=40;x+=2){ const y=14+Math.sin(x*.42+ph)*amp*Math.sin(x/40*Math.PI)+(pstate==="loading"?Math.sin(x*1.7+ph*3)*1.2:0); d+=` L${x} ${y.toFixed(2)}` } $("#sigp").setAttribute("d",d); $("#sigp").setAttribute("opacity",pstate==="playing"?1:.5); requestAnimationFrame(anim) })();
+
+/* ---------- shared renderers ---------- */
+const kindChip=s=>`<span class="kind k-${s.kind}"><i></i>${KIND[s.kind]}</span>`;
+function fqCell(s){ const k=parseFreq(s); const b=bandOf(s); if(k!=null){const f=fmtF(k);return `${f.u==="kHz"&&k>=1000?Math.round(k).toLocaleString("en-GB"):f.v} ${f.u}<span>${b||""}</span>`} return b?`${b}<span>band</span>`:`—<span>off dial</span>`}
+function rowEl(s,compact){ const st=statusOf(s); const b=el("button",{class:"row"+(state.cur&&state.cur.id===s.id?" playing":""),"data-id":s.id,onclick:()=>openSheet(s)});
+  b.innerHTML=`<div class="fq">${fqCell(s)}</div><div><div class="t">${esc(s.title)}</div><div class="m"><span class="km k-${s.kind}">${KIND[s.kind]} · </span>${esc(s.place)}${s.lang&&s.lang!=="—"?" · "+esc(s.lang):""}</div></div><div class="r">${compact?"":kindChip(s)}<i class="sdot ${st==="ok"?"":st}" title="${esc(verifiedLine(s))}"></i></div>`; return b}
+function renderRows(){ $$(".row").forEach(r=>r.classList.toggle("playing",!!(state.cur&&r.dataset.id===state.cur.id))) }
+function specs(s){ const k=parseFreq(s), b=bandOf(s), lt=s.tz&&s.lat!=null?localTime(s.tz):null;
+  const rows=[["Frequency",s.freq||(b?b+" · frequency not logged":"Not on a frequency")],["Type",KIND[s.kind]],["Category",DATA.categories[s.cat]],["Language",s.lang||"—"],["Mode",s.mode||"—"],["Origin",s.place+(s.country&&s.country!==s.place&&s.country!=="—"?", "+s.country:"")]];
+  if(s.recorded)rows.push(["Recorded",s.recorded+(s.utc?" · "+s.utc+" UTC":"")]); else if(lt)rows.push(["Local time there",lt]);
+  if(s.schedule)rows.push(["Scheduled",s.schedule.label+" · "+s.schedule.times.join(", ")+" UK"]);
+  rows.push(["Signal",verifiedLine(s)]);
+  return `<dl class="specs">${rows.map(r=>`<div><dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd></div>`).join("")}</dl>`}
+function playBtn(s){ const on=state.cur&&state.cur.id===s.id&&pstate==="playing"; return `<button class="btn primary" data-play="${s.id}">${on?ICON.pause:ICON.play}${on?"Pause":(s.kind==="live"||s.kind==="stream")?"Listen live":"Play recording"}</button>`}
+document.addEventListener("click",e=>{ const p=e.target.closest("[data-play]"); if(p){ e.stopPropagation(); const s=BY[p.dataset.play]; if(state.cur&&state.cur.id===s.id){toggle()} else { state.queue=state.queue.length?state.queue:SRC; play(s) } setTimeout(()=>{ if(sheet.open&&sheet.dataset.id===s.id)openSheet(s,true); if(state.tuned&&state.tuned.id===s.id)renderTuned(s) },60) }
+  const sh=e.target.closest("[data-share]"); if(sh){ const s=BY[sh.dataset.share]; const url=location.href.split("#")[0]+"#/s/"+s.id; if(navigator.share)navigator.share({title:s.title+" — The Frequency Atlas",url}).catch(()=>{}); else {navigator.clipboard&&navigator.clipboard.writeText(url);toast("Link copied")} } });
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1800)}
+
+/* ---------- sheet ---------- */
+const sheet=$("#sheet");
+function openSheet(s,keep){ sheet.dataset.id=s.id;
+  $("#sheetin").innerHTML=`<div class="grab"></div><button class="close" aria-label="Close" id="sclose">${ICON.x}</button>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">${kindChip(s)}<span class="tag">${esc(DATA.categories[s.cat])}</span></div>
+   <h2>${esc(s.title)}</h2>
+   <div class="where mono" style="font-size:12px;color:var(--ink2)">${esc(s.place)}${s.country&&s.country!==s.place&&s.country!=="—"?", "+esc(s.country):""}</div>
+   ${s.geoNote?`<div class="geo">${esc(s.geoNote)}</div>`:""}
+   <p style="font-size:16px;line-height:1.62;color:var(--ink2);margin:16px 0 0">${esc(s.blurb)}</p>
+   <div class="hear"><span class="eyebrow">What you are hearing</span><p>${esc(s.hear)}</p></div>
+   <div class="actions" style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">${playBtn(s)}<button class="btn" data-share="${s.id}">${ICON.share}Share</button></div>
+   ${specs(s)}
+   <div class="credit">${esc(s.credit)} · ${esc(s.licence)}<br><a href="${esc(s.src)}" target="_blank" rel="noopener">Source page ↗</a></div>`;
+  $("#sclose").onclick=()=>sheet.close();
+  if(!sheet.open){ sheet.showModal(); if(!keep&&location.hash!=="#/s/"+s.id) history.replaceState(null,"","#/s/"+s.id) } }
+sheet.addEventListener("click",e=>{ if(e.target===sheet)sheet.close() });
+sheet.addEventListener("close",()=>{ if(location.hash.startsWith("#/s/"))history.replaceState(null,"",location.pathname+location.search) });
+
+/* ---------- DIAL ---------- */
+let marks=[], dialW=0, segs=[];
+function buildDial(){
+  const tr=$("#track"); const vw=tr.clientWidth||window.innerWidth; const unit=Math.max(300,Math.min(520,vw*.82));
+  let x=vw/2; segs=BANDS.map(b=>{const w=unit*b.w; const sg={...b,x0:x,x1:x+w}; x+=w; return sg}); dialW=x+vw/2;
+  const posF=k=>{const sg=segs.find(g=>g.lo!=null&&k>=g.lo&&k<g.hi)||(k<3?segs[0]:segs[4]); const t=Math.log10(k/sg.lo)/Math.log10(sg.hi/sg.lo); return sg.x0+t*(sg.x1-sg.x0)};
+  // place markers
+  const exact=[], bandOnly={}, off=[];
+  SRC.forEach(s=>{const k=parseFreq(s); if(k!=null) exact.push({s,x:posF(k),k,lane:0}); else { const b=bandOf(s); if(b){(bandOnly[b]=bandOnly[b]||[]).push(s)} else off.push(s) } });
+  for(const b in bandOnly){ const sg=segs.find(g=>g.k===b), L=bandOnly[b]; L.forEach((s,i)=>exact.push({s,x:sg.x0+(sg.x1-sg.x0)*(i+1)/(L.length+1),k:null,lane:1})) }
+  const ng=segs[5]; off.forEach((s,i)=>exact.push({s,x:ng.x0+(ng.x1-ng.x0)*(i+.5)/off.length,k:null,lane:2}));
+  marks=exact.sort((a,b)=>a.x-b.x);
+  for(let lane=0;lane<3;lane++){ const L=marks.filter(m=>m.lane===lane); for(let i=1;i<L.length;i++){ if(L[i].x-L[i-1].x<22) L[i].x=L[i-1].x+22 } }
+  marks.sort((a,b)=>a.x-b.x);
+  // svg
+  const H=178, base=150; let g=`<svg width="${dialW}" viewBox="0 0 ${dialW} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  g+=`<defs><linearGradient id="gl" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d6b46e" stop-opacity=".0"/><stop offset="1" stop-color="#d6b46e" stop-opacity=".22"/></linearGradient></defs>`;
+  segs.forEach((sg,i)=>{ g+=`<rect x="${sg.x0}" y="58" width="${sg.x1-sg.x0}" height="${H-58}" fill="${i%2?"rgba(236,226,204,.012)":"transparent"}"/>`;
+    g+=`<line x1="${sg.x0}" x2="${sg.x0}" y1="58" y2="${H}" stroke="rgba(236,226,204,.16)"/>`;
+    g+=`<text x="${sg.x0+10}" y="74" fill="#d6b46e" font-family="IBM Plex Mono" font-size="10" letter-spacing="2.4">${sg.k}</text><text x="${sg.x0+10}" y="88" fill="#7f7a6d" font-family="IBM Plex Mono" font-size="8.5" letter-spacing="1.4">${sg.name.toUpperCase()}</text>`;
+    if(sg.lo!=null){ const dec=Math.log10(sg.hi/sg.lo); for(let m=Math.pow(10,Math.floor(Math.log10(sg.lo)));m<sg.hi;m*=10){ for(const f of [1,2,3,4,5,6,7,8,9]){ const k=m*f; if(k>=sg.hi)break; if(k<sg.lo)continue; const xx=sg.x0+Math.log10(k/sg.lo)/dec*(sg.x1-sg.x0); const major=f===1||f===2||f===5;
+      g+=`<line x1="${xx}" x2="${xx}" y1="${base-(major?14:7)}" y2="${base}" stroke="rgba(236,226,204,${major?.34:.14})"/>`;
+      if(major){ g+=`<text x="${xx}" y="${base+16}" fill="#7f7a6d" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">${tickLab(k)}</text>`} } } }
+    else { for(let xx=sg.x0+14;xx<sg.x1;xx+=14) g+=`<line x1="${xx}" x2="${xx}" y1="${base-4}" y2="${base}" stroke="rgba(236,226,204,.1)"/>` }
+  });
+  g+=`<line x1="0" x2="${dialW}" y1="${base}" y2="${base}" stroke="rgba(236,226,204,.22)"/>`;
+  marks.forEach((m,i)=>{ const c=`var(--k-${m.s.kind})`; const h=m.lane===0?46:m.lane===1?30:24; const top=base-16-h; const live=m.s.kind==="live"||m.s.kind==="stream";
+    g+=`<g class="mk" data-i="${i}"><rect x="${m.x-11}" y="${top-14}" width="22" height="${h+32}" fill="transparent"/>`;
+    g+=`<line x1="${m.x}" x2="${m.x}" y1="${top}" y2="${base-16}" stroke="${c}" stroke-width="${m.lane===0?1.3:1}" ${m.lane===1?'stroke-dasharray="2 3"':""} opacity=".9"/>`;
+    g+=`<rect x="${m.x-1}" y="${base-16}" width="2" height="16" fill="url(#gl)"/>`;
+    g+=`<circle cx="${m.x}" cy="${top}" r="${m.lane===0?3:2.4}" fill="${m.lane===2?"none":c}" stroke="${c}" ${live?'class="pulse"':""}/></g>`; });
+  g+=`</svg>`; tr.innerHTML=g;
+  tr.querySelectorAll(".mk").forEach(n=>n.addEventListener("click",e=>{ e.stopPropagation(); tuneTo(+n.dataset.i,true) }));
+}
+function freqAt(x){ const sg=segs.find(g=>x>=g.x0&&x<g.x1); if(!sg)return {sg:null}; if(sg.lo==null)return {sg}; const t=(x-sg.x0)/(sg.x1-sg.x0); return {sg,k:sg.lo*Math.pow(sg.hi/sg.lo,t)} }
+let tunedI=-1, scrollT=null, programmatic=false;
+function centreX(){ const tr=$("#track"); return tr.scrollLeft+tr.clientWidth/2 }
+function updReadout(){ const x=centreX(); const {sg,k}=freqAt(x); const m=marks[tunedI];
+  const near=marks.reduce((b,mm,i)=>Math.abs(mm.x-x)<Math.abs((marks[b]||{x:1e9}).x-x)?i:b,0);
+  $$(".mk").forEach((n,i)=>n.classList.toggle("near",i===near&&Math.abs(marks[near].x-x)<12));
+  if(m&&Math.abs(m.x-x)<3&&m.k==null){ const b=bandOf(m.s); $("#rf").innerHTML=m.lane===2?`NET <small>off dial</small>`:`${b} <small>band</small>`; $("#rb").innerHTML=m.lane===2?"No frequency<br>online or field":"Frequency not<br>logged"; return }
+  if(!sg){return} if(sg.lo==null){ $("#rf").innerHTML=`NET <small>off dial</small>`; $("#rb").innerHTML="Online streams &amp;<br>field recordings"; return }
+  const f=m&&Math.abs(m.x-x)<3&&m.k!=null?fmtF(m.k):fmtF(k); $("#rf").innerHTML=`${f.u==="kHz"&&Number(f.v)>=1000?Number(f.v).toLocaleString("en-GB"):f.v} <small>${f.u}</small>`; $("#rb").innerHTML=`${sg.k}<br><span style="color:var(--mute)">${sg.name}</span>`;
+}
+function tuneTo(i,smooth){ if(i<0||i>=marks.length)return; tunedI=i; const tr=$("#track"); programmatic=true; tr.scrollTo({left:marks[i].x-tr.clientWidth/2,behavior:smooth?"smooth":"auto"}); setTimeout(()=>programmatic=false,smooth?600:50);
+  state.tuned=marks[i].s; renderTuned(marks[i].s); $("#pos").textContent=`${pad(i+1)} / ${pad(marks.length)}`; updReadout(); try{localStorage.setItem("fa.tuned",marks[i].s.id)}catch(e){} }
+function snap(){ const x=centreX(); let best=0; marks.forEach((m,i)=>{ if(Math.abs(m.x-x)<Math.abs(marks[best].x-x))best=i }); if(best!==tunedI||Math.abs(marks[best].x-x)>1) tuneTo(best,true) }
+function bindDial(){ const tr=$("#track");
+  tr.addEventListener("scroll",()=>{ requestAnimationFrame(updReadout); if(programmatic)return; clearTimeout(scrollT); scrollT=setTimeout(snap,160) },{passive:true});
+  // mouse drag for desktop
+  let dn=null; tr.addEventListener("pointerdown",e=>{ if(e.pointerType!=="mouse")return; dn={x:e.clientX,l:tr.scrollLeft,moved:false} });
+  window.addEventListener("pointermove",e=>{ if(!dn)return; const dx=e.clientX-dn.x; if(Math.abs(dx)>3)dn.moved=true; tr.scrollLeft=dn.l-dx });
+  window.addEventListener("pointerup",()=>{ if(dn&&dn.moved){ setTimeout(snap,30) } dn=null });
+  tr.addEventListener("wheel",e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ tr.scrollLeft+=e.deltaY; e.preventDefault() } },{passive:false});
+  $("#prev").onclick=()=>tuneTo(Math.max(0,tunedI-1),true); $("#next").onclick=()=>tuneTo(Math.min(marks.length-1,tunedI+1),true);
+  document.addEventListener("keydown",e=>{ if(!$("#v-dial").classList.contains("on")||sheet.open||e.target.tagName==="INPUT")return; if(e.key==="ArrowLeft"){tuneTo(Math.max(0,tunedI-1),true)} if(e.key==="ArrowRight"){tuneTo(Math.min(marks.length-1,tunedI+1),true)} if(e.key===" "){e.preventDefault();toggle()} if(e.key==="Enter"&&state.tuned){play(state.tuned)} });
+}
+function renderTuned(s){ $("#tuned").innerHTML=`<div><div class="k">${kindChip(s)}<span class="tag">${esc(DATA.categories[s.cat])}</span></div>
+   <h2>${esc(s.title)}</h2><div class="where">${esc(s.place)}${s.country&&s.country!==s.place&&s.country!=="—"?", "+esc(s.country):""}${s.lat!=null&&s.kind!=="field"&&!s.recorded?" · "+localTime(s.tz)+" local":""}</div>
+   <p>${esc(s.blurb)}</p><div class="actions">${playBtn(s)}<button class="btn" onclick="void 0" data-more="${s.id}">Details</button></div></div>
+   <div>${specs(s)}</div>`;
+  const m=$(`[data-more="${s.id}"]`); if(m)m.onclick=()=>openSheet(s) }
+
+/* ---------- NOW ---------- */
+function nextSchedule(s,now=new Date()){ // returns minutes until next scheduled time in its tz
+  const sc=s.schedule; if(!sc)return null; const parts=new Intl.DateTimeFormat("en-GB",{timeZone:sc.tz,hour:"2-digit",minute:"2-digit",hour12:false}).format(now).split(":").map(Number);
+  const cur=parts[0]%24*60+parts[1]; let best=1e9; sc.times.forEach(t=>{const [h,m]=t.split(":").map(Number); let d=h*60+m-cur; if(d<-8)d+=1440; best=Math.min(best,d)}); return best }
+function renderNow(){
+  const now=new Date(), g=$("#nowgrid"); g.innerHTML="";
+  const geo=SRC.filter(s=>s.lat!=null);
+  const grey=geo.map(s=>({s,e:elevation(s.lat,s.lon,now)})).filter(o=>o.e>-6&&o.e<4).sort((a,b)=>Math.abs(a.e)-Math.abs(b.e));
+  const lives=SRC.filter(s=>(s.kind==="live")&&s.tz&&s.lat!=null);
+  const night=lives.filter(s=>{const h=localHour(s.tz,now);return h!=null&&h>=0&&h<5});
+  const utcMin=now.getUTCHours()*60+now.getUTCMinutes();
+  const sameHour=SRC.filter(s=>s.utc).map(s=>{const [h,m]=s.utc.split(":").map(Number);let d=Math.abs(h*60+m-utcMin);d=Math.min(d,1440-d);return {s,d}}).filter(o=>o.d<=75).sort((a,b)=>a.d-b.d);
+  const bbc=BY["bbc-radio-4"]; const mins=nextSchedule(bbc,now);
+  // headline
+  let head;
+  if(mins!=null&&mins<=20&&mins>=-8) head=mins>0?`The Shipping Forecast begins in <em>${mins} min</em>.`:`The Shipping Forecast is <em>on air</em>.`;
+  else if(grey.length) { const o=grey[0]; head=`${o.e>=0?(isRising(o.s)?"Sunrise":"Sunset"):(isRising(o.s)?"First light":"Last light")} over <em>${esc(o.s.place.split(",")[0])}</em>.`}
+  else head=`Listening by the <em>clock</em>.`;
+  $("#nowlede").innerHTML=head;
+  // schedule card
+  const hh=Math.floor(mins/60), mm=mins%60;
+  g.append(card("Scheduled · BBC Radio 4",mins<=0&&mins>=-8?"On air now":"Next Shipping Forecast",
+    `<div class="count">${mins<=0&&mins>=-8?"LIVE":(hh?hh+"h ":"")+pad(mm)+"m"}</div><p style="margin-top:10px">Read at 00:48 and 05:20 UK time, gale warnings first, then each sea area in its fixed order. It is ${localTime("Europe/London",now)} in London.</p>`,[bbc,BY["shipping-forecast-2015"]]));
+  g.append(card("On the greyline",grey.length?`Dawn or dusk at ${grey.length} source${grey.length>1?"s":""}`:"No sources on the line right now",
+    `<p>The sun is within a few degrees of the horizon at these places. Twilight is when the ionosphere shifts and shortwave paths open and close.</p>`,grey.slice(0,6).map(o=>o.s)));
+  g.append(card("After midnight there",night.length?`${night.length} live station${night.length>1?"s":""} in the small hours`:"Nowhere live is past midnight yet",
+    `<p>Live sources where the local clock reads between midnight and five in the morning.</p>`,night));
+  g.append(card("Recorded at this hour",sameHour.length?`${sameHour.length} recording${sameHour.length>1?"s":""} made near ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())} UTC`:"Nothing logged at this hour",
+    `<p>Off-air recordings whose start time falls within 75 minutes of now in UTC. Same hour, different year.</p>`,sameHour.map(o=>o.s)));
+  const lh=now.getHours(); const yours=lh>=4&&lh<8?["dawn-chorus-alberta","alaska-chorus","whistlers-london"]:lh>=22||lh<4?DATA.sources.filter(s=>s.collections.includes("midnight")).map(s=>s.id):lh>=8&&lh<12?["chu-canada","shannon-volmet","wwvh"]:["svalbard-storm","pyramiden","standing-wave"];
+  const yl=lh>=4&&lh<8?"Dawn where you are: the magnetosphere's own dawn chorus":lh>=22||lh<4?"Late where you are: broadcasts beyond midnight":lh>=8&&lh<12?"Morning where you are: the world's clocks and weather":"Afternoon and evening where you are: long listens";
+  g.append(card("For your hour · "+pad(lh)+":"+pad(now.getMinutes())+" local",yl,"",yours.map(i=>BY[i]).filter(Boolean)));
+}
+function isRising(s){ const e1=elevation(s.lat,s.lon,new Date()), e2=elevation(s.lat,s.lon,new Date(Date.now()+6e5)); return e2>e1 }
+function card(eb,title,body,list){ const c=el("div",{class:"card"}); c.innerHTML=`<span class="eyebrow">${esc(eb)}</span><h4>${title}</h4>${body}`; if(list&&list.length){ const r=el("div",{class:"rows"}); list.forEach(s=>r.append(rowEl(s,true))); c.append(r) } return c }
+
+/* ---------- MAP ---------- */
+function renderMap(){
+  const W=1000,H=500, X=lo=>(lo+180)/360*W, Y=la=>(90-la)/180*H; const now=new Date(); const {dec,subLon,rad}=sun(now);
+  const term=(off)=>{ // night-side polygon bounded by the line where solar elevation = off degrees
+    const north=dec<0, sD=Math.sin(dec), cD=Math.cos(dec), C=Math.sin(off*rad); let pts=[];
+    for(let lo=-180;lo<=180;lo+=2){ const cH=Math.cos((lo-subLon)*rad); let la=north?90:-90; const stp=north?-0.5:0.5;
+      while(Math.abs(la)<=90){ const sl=Math.sin(la*rad), cl=Math.cos(la*rad); if(sl*sD+cl*cD*cH>=C)break; la+=stp }
+      la=Math.max(-90,Math.min(90,la)); pts.push([X(lo),Y(la)]) }
+    const pole=north?0:H; return "M"+pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L")+`L${W},${pole}L0,${pole}Z` };
+  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let lo=-150;lo<=150;lo+=30)s+=`<line x1="${X(lo)}" x2="${X(lo)}" y1="0" y2="${H}" stroke="rgba(236,226,204,.05)"/>`;
+  for(let la=-60;la<=60;la+=30)s+=`<line x1="0" x2="${W}" y1="${Y(la)}" y2="${Y(la)}" stroke="rgba(236,226,204,${la===0?.09:.05})"/>`;
+  s+=`<line x1="0" x2="${W}" y1="${Y(66.56)}" y2="${Y(66.56)}" stroke="rgba(157,182,198,.12)" stroke-dasharray="2 4"/><line x1="0" x2="${W}" y1="${Y(-66.56)}" y2="${Y(-66.56)}" stroke="rgba(157,182,198,.12)" stroke-dasharray="2 4"/>`;
+  s+=`<path d="${window.LAND_PATH}" fill="rgba(236,226,204,.10)" stroke="rgba(236,226,204,.32)" stroke-width=".5"/>`;
+  s+=`<path d="${term(-12)}" fill="rgba(4,6,12,.30)"/><path d="${term(-6)}" fill="rgba(4,6,12,.26)"/><path d="${term(0)}" fill="rgba(4,6,12,.30)"/><path d="${term(0).split("L"+W)[0]}" fill="none" stroke="rgba(214,180,110,.35)" stroke-width=".8" stroke-dasharray="1 3"/>`;
+  s+=`<circle cx="${X(subLon)}" cy="${Y(dec/rad)}" r="5" fill="none" stroke="#d6b46e" stroke-width=".8" opacity=".7"/><circle cx="${X(subLon)}" cy="${Y(dec/rad)}" r="1.5" fill="#d6b46e"/>`;
+  const sf=Math.max(1,Math.min(2.4,760/(($("#mapbox").clientWidth)||760)));
+  SRC.filter(x=>x.lat!=null).forEach(x=>{ const live=x.kind==="live"||x.kind==="stream"; s+=`<g class="dot" data-id="${x.id}" style="cursor:pointer"><circle cx="${X(x.lon)}" cy="${Y(x.lat)}" r="${12*sf}" fill="transparent"/>${live?`<circle cx="${X(x.lon)}" cy="${Y(x.lat)}" r="${6*sf}" fill="none" stroke="var(--k-${x.kind})" stroke-width="${.6*sf}" class="pulse"/>`:""}<circle cx="${X(x.lon)}" cy="${Y(x.lat)}" r="${2.6*sf}" fill="var(--k-${x.kind})"/></g>` });
+  s+=`<text x="${X(subLon)+9}" y="${Y(dec/rad)+3}" fill="#d6b46e" font-family="IBM Plex Mono" font-size="9" letter-spacing="1">SUBSOLAR</text></svg>`;
+  $("#mapbox").innerHTML=s; $$("#mapbox .dot").forEach(d=>d.addEventListener("click",()=>openSheet(BY[d.dataset.id])));
+  $("#legend").innerHTML=Object.keys(KIND).map(k=>`<span class="kind k-${k}"><i></i>${KIND[k]}</span>`).join("");
+  const regs={}; SRC.forEach(x=>{(regs[x.region]=regs[x.region]||[]).push(x)});
+  const order=["Arctic","Europe","North America","Caribbean","South Atlantic","Asia","Pacific","Antarctica","Deep space","Online"];
+  $("#regions").innerHTML=""; order.filter(r=>regs[r]).forEach(r=>{ $("#regions").append(el("div",{class:"shead",html:`<h3>${esc(r)}</h3><span class="eyebrow">${regs[r].length} signal${regs[r].length>1?"s":""}</span>`})); const rw=el("div",{class:"rows"}); regs[r].forEach(x=>rw.append(rowEl(x))); $("#regions").append(rw) });
+}
+
+/* ---------- COLLECTIONS ---------- */
+function renderColls(){ const c=$("#colls"); c.innerHTML="";
+  DATA.collections.forEach((co,i)=>{ const L=SRC.filter(s=>s.collections.includes(co.id)); if(!L.length)return;
+    const b=el("button",{class:"coll",onclick:()=>openColl(co)}); const places=[...new Set(L.map(s=>s.place.split(",")[0]))].slice(0,5).join(" · ");
+    b.innerHTML=`<svg class="wave" viewBox="0 0 140 40"><path d="${wavePath(i)}" fill="none" stroke="#d6b46e" stroke-width="1"/></svg><div class="n">${pad(i+1)} · ${L.length} SIGNALS</div><h4>${esc(co.title)}</h4><p>${esc(co.dek)}</p><div class="pl">${esc(places)}</div>`; c.append(b) }) }
+function wavePath(i){ let d="M0 20"; for(let x=0;x<=140;x+=3){ const y=20+Math.sin(x*(.08+i*.025))*(8+i%3*3)*Math.sin(x/140*Math.PI); d+=` L${x} ${y.toFixed(1)}` } return d }
+function openColl(co){ const L=SRC.filter(s=>s.collections.includes(co.id)); const o=$("#collopen"); o.innerHTML=""; state.queue=L;
+  o.append(el("div",{class:"shead",html:`<h3>${esc(co.title)}</h3><button class="btn" id="playall">${ICON.play}Play in order</button>`})); const rw=el("div",{class:"rows"}); L.forEach(s=>rw.append(rowEl(s))); o.append(rw);
+  $("#playall").onclick=()=>{state.queue=L;play(L[0])}; o.scrollIntoView({behavior:"smooth",block:"start"}) }
+
+/* ---------- INDEX ---------- */
+const F={cat:null,kind:null,ch:null,q:""};
+function chipRow(id,opts,key){ const r=$("#"+id); r.innerHTML=""; opts.forEach(([v,label,n])=>{ const b=el("button",{class:"chip","aria-pressed":String(F[key]===v)}); b.innerHTML=`${esc(label)}<b>${n}</b>`; b.onclick=()=>{F[key]=F[key]===v?null:v;renderIndex()}; r.append(b) }) }
+function renderIndex(){
+  const cnt=(f)=>SRC.filter(f).length;
+  chipRow("fcat",Object.entries(DATA.categories).map(([k,v])=>[k,v,cnt(s=>s.cat===k)]).filter(o=>o[2]),"cat");
+  chipRow("fkind",Object.entries(KIND).map(([k,v])=>[k,v,cnt(s=>s.kind===k)]),"kind");
+  const chars=[...new Set(SRC.flatMap(s=>s.character))].sort(); chipRow("fchar",chars.map(c=>[c,c,cnt(s=>s.character.includes(c))]),"ch");
+  const q=F.q.toLowerCase().trim();
+  const L=SRC.filter(s=>(!F.cat||s.cat===F.cat)&&(!F.kind||s.kind===F.kind)&&(!F.ch||s.character.includes(F.ch))&&(!q||[s.title,s.place,s.country,s.lang,s.freq,s.region,DATA.categories[s.cat]].join(" ").toLowerCase().includes(q)));
+  const l=$("#list"); l.innerHTML=""; L.forEach(s=>l.append(rowEl(s))); if(!L.length)l.innerHTML=`<p class="sub" style="margin-top:20px">No signals match those filters.</p>`;
+  state.queue=L.length?L:SRC;
+  const d=STATUS.checked?new Date(STATUS.checked).toLocaleString("en-GB",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit",timeZone:"UTC"})+" UTC":"not yet";
+  const ok=SRC.filter(s=>statusOf(s)==="ok").length;
+  $("#foot").innerHTML=`${SRC.length} sources · ${ok} passing · last weekly check ${esc(d)}<br>${esc(STATUS.method||"")}<br><button id="selftest">Run a signal check from this device</button> <span id="stres"></span><br><br>Streams belong to their broadcasters. Recordings are credited on each source; most come from the Shortwave Radio Audio Archive and the Internet Archive. Nothing here is fabricated: if a source stops responding it is marked, never hidden behind a placeholder.`;
+  $("#selftest").onclick=selfTest;
+}
+async function selfTest(){ const res=$("#stres"); let done=0, bad=0; res.textContent="checking…";
+  const test=s=>new Promise(r=>{ if(s.fmt==="hls"&&!canNativeHls){ fetch(s.url,{mode:"cors"}).then(x=>x.text()).then(t=>r(t.includes("#EXTM3U"))).catch(()=>r(false)); return }
+    const a=new Audio(); a.preload="metadata"; a.muted=true; let t=setTimeout(()=>{fin(false)},12000); const fin=v=>{clearTimeout(t);a.removeAttribute("src");a.load();r(v)};
+    a.addEventListener("loadedmetadata",()=>fin(true),{once:true}); a.addEventListener("canplay",()=>fin(true),{once:true}); a.addEventListener("error",()=>fin(false),{once:true}); a.src=s.url; a.load() });
+  const q=[...SRC]; const worker=async()=>{ while(q.length){ const s=q.shift(); if(state.cur&&state.cur.id===s.id){done++;continue} const ok=await test(s); LOCAL[s.id]=ok; if(!ok)bad++; done++; res.textContent=`${done}/${SRC.length} checked · ${bad} not responding`; } };
+  await Promise.all([worker(),worker(),worker(),worker()]); res.textContent=`Done: ${SRC.length-bad} responded, ${bad} did not.`; $$(".row").forEach(r=>{const s=BY[r.dataset.id];const d=r.querySelector(".sdot");if(d){const st=statusOf(s);d.className="sdot "+(st==="ok"?"":st);d.title=verifiedLine(s)}}) }
+$("#q").addEventListener("input",e=>{F.q=e.target.value;renderIndex()});
+
+/* ---------- views & routing ---------- */
+function show(v){ $$("#tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.v===v))); $$("main .view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  if(v==="now")renderNow(); if(v==="map")renderMap(); if(v==="dial"){requestAnimationFrame(()=>{ if(tunedI>=0)tuneTo(tunedI,false) })} window.scrollTo({top:0}); try{localStorage.setItem("fa.view",v)}catch(e){} }
+$$("#tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
+function route(){ const m=location.hash.match(/^#\/s\/([\w-]+)/); if(m&&BY[m[1]])openSheet(BY[m[1]],true) }
+window.addEventListener("hashchange",route);
+
+/* ---------- clock ---------- */
+function tick(){ const d=new Date(); $("#clock").innerHTML=`<span>UTC</span> ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}<br><span>${SRC.length||"—"} SIGNALS</span>`; }
+setInterval(tick,1000); setInterval(()=>{ if($("#v-now").classList.contains("on"))renderNow(); if($("#v-map").classList.contains("on"))renderMap() },60000);
+
+/* ---------- boot ---------- */
+(async function boot(){
+  DATA=await fetch("sources.json",{cache:"no-cache"}).then(r=>r.json());
+  try{ STATUS=await fetch("status.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{results:{}}) }catch(e){}
+  SRC=DATA.sources; SRC.forEach(s=>BY[s.id]=s); tick();
+  buildDial(); bindDial(); renderColls(); renderIndex(); if(!canNativeHls)setTimeout(()=>loadHls().catch(()=>{}),1500);
+  let start=0; try{ const t=localStorage.getItem("fa.tuned"); const i=marks.findIndex(m=>m.s.id===t); if(i>=0)start=i; else start=marks.findIndex(m=>m.s.id==="uvb-76") }catch(e){}
+  tuneTo(Math.max(0,start),false);
+  let v="dial"; try{ v=localStorage.getItem("fa.view")||"dial" }catch(e){} if(!["dial","now","map","collections","index"].includes(v))v="dial"; show(v);
+  route();
+  let rt; window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{const id=marks[tunedI]&&marks[tunedI].s.id;buildDial();const i=marks.findIndex(m=>m.s.id===id);tuneTo(Math.max(0,i),false)},200)});
+})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+{
+ "checked": "2026-11-23T06:32:01Z",
+ "method": "Weekly automated check: fetched the start of each source and confirmed audio (HLS: playlist and a segment).",
+ "results": {
+  "bbc-world-service": {
+   "ok": true,
+   "ms": 849,
+   "note": "200 audio/mpeg"
+  },
+  "noaa-wwg24": {
+   "ok": true,
+   "ms": 915,
+   "note": "200 audio/mpeg"
+  },
+  "bbc-radio-4": {
+   "ok": true,
+   "ms": 966,
+   "note": "segment 206"
+  },
+  "noaa-kec49": {
+   "ok": true,
+   "ms": 1572,
+   "note": "200 audio/mpeg"
+  },
+  "cbc-north-iqaluit": {
+   "ok": true,
+   "ms": 1006,
+   "note": "206 audio/mpeg"
+  },
+  "yle-sami": {
+   "ok": true,
+   "ms": 946,
+   "note": "200 audio/aacp"
+  },
+  "bfbs-falklands": {
+   "ok": true,
+   "ms": 983,
+   "note": "200 audio/aacp"
+  },
+  "nrk-sapmi": {
+   "ok": true,
+   "ms": 1837,
+   "note": "200 audio/mpeg"
+  },
+  "bfbs-gurkha": {
+   "ok": true,
+   "ms": 938,
+   "note": "200 audio/aacp"
+  },
+  "vatican-radio": {
+   "ok": true,
+   "ms": 1073,
+   "note": "200 audio/mpeg"
+  },
+  "radio-prague-intl": {
+   "ok": true,
+   "ms": 584,
+   "note": "206 audio/mpeg"
+  },
+  "standing-wave": {
+   "ok": true,
+   "ms": 593,
+   "note": "200 audio/mpeg"
+  },
+  "wgxc": {
+   "ok": true,
+   "ms": 732,
+   "note": "200 audio/mpeg"
+  },
+  "resonance-extra": {
+   "ok": true,
+   "ms": 737,
+   "note": "200 audio/mpeg"
+  },
+  "radio-worm": {
+   "ok": true,
+   "ms": 811,
+   "note": "200 audio/mpeg"
+  },
+  "cashmere-radio": {
+   "ok": true,
+   "ms": 1251,
+   "note": "200 audio/mpeg"
+  },
+  "morseops-20": {
+   "ok": true,
+   "ms": 955,
+   "note": "200 audio/mpeg"
+  },
+  "riafc": {
+   "ok": true,
+   "ms": 1202,
+   "note": "200 audio/mpeg"
+  },
+  "lincolnshire-poacher": {
+   "ok": true,
+   "ms": 512,
+   "note": "206 audio/mpeg"
+  },
+  "hm01": {
+   "ok": true,
+   "ms": 442,
+   "note": "206 audio/mpeg"
+  },
+  "uvb-76": {
+   "ok": true,
+   "ms": 470,
+   "note": "206 audio/mpeg"
+  },
+  "swedish-rhapsody": {
+   "ok": true,
+   "ms": 878,
+   "note": "206 audio/mpeg"
+  },
+  "usaf-eam": {
+   "ok": true,
+   "ms": 893,
+   "note": "206 audio/mpeg"
+  },
+  "chu-canada": {
+   "ok": true,
+   "ms": 477,
+   "note": "206 audio/mpeg"
+  },
+  "afan-mcmurdo": {
+   "ok": true,
+   "ms": 617,
+   "note": "206 audio/mpeg"
+  },
+  "wwvh": {
+   "ok": true,
+   "ms": 859,
+   "note": "206 audio/mpeg"
+  },
+  "gander-volmet": {
+   "ok": true,
+   "ms": 528,
+   "note": "206 audio/mpeg"
+  },
+  "shannon-volmet": {
+   "ok": true,
+   "ms": 676,
+   "note": "206 audio/mpeg"
+  },
+  "shipping-forecast-2015": {
+   "ok": true,
+   "ms": 691,
+   "note": "206 audio/mpeg"
+  },
+  "uscg-nmc": {
+   "ok": true,
+   "ms": 543,
+   "note": "206 audio/mpeg"
+  },
+  "bollettino-1977": {
+   "ok": true,
+   "ms": 789,
+   "note": "206 audio/mpeg"
+  },
+  "prinsendam-sos": {
+   "ok": true,
+   "ms": 651,
+   "note": "206 audio/mpeg"
+  },
+  "night-of-nights": {
+   "ok": true,
+   "ms": 894,
+   "note": "206 audio/mpeg"
+  },
+  "lra36": {
+   "ok": true,
+   "ms": 598,
+   "note": "206 audio/mpeg"
+  },
+  "bbc-midwinter-2023": {
+   "ok": true,
+   "ms": 477,
+   "note": "206 audio/mpeg"
+  },
+  "ham-palmer-1974": {
+   "ok": true,
+   "ms": 465,
+   "note": "206 audio/mpeg"
+  },
+  "svalbard-storm": {
+   "ok": true,
+   "ms": 592,
+   "note": "206 audio/mpeg"
+  },
+  "pyramiden": {
+   "ok": true,
+   "ms": 617,
+   "note": "206 audio/mpeg"
+  },
+  "radio-pyongyang-1975": {
+   "ok": true,
+   "ms": 620,
+   "note": "206 audio/mpeg"
+  },
+  "voice-of-korea-2024": {
+   "ok": true,
+   "ms": 599,
+   "note": "206 audio/mpeg"
+  },
+  "tibet-pbs": {
+   "ok": true,
+   "ms": 277,
+   "note": "206 audio/mpeg"
+  },
+  "kcbs-sinuiju": {
+   "ok": true,
+   "ms": 530,
+   "note": "206 audio/mpeg"
+  },
+  "furusato-no-kaze": {
+   "ok": true,
+   "ms": 699,
+   "note": "206 audio/mpeg"
+  },
+  "voice-of-mongolia": {
+   "ok": true,
+   "ms": 615,
+   "note": "206 audio/mpeg"
+  },
+  "radio-australia-2000": {
+   "ok": true,
+   "ms": 560,
+   "note": "206 audio/mpeg"
+  },
+  "france-inter-lw": {
+   "ok": true,
+   "ms": 757,
+   "note": "206 audio/mpeg"
+  },
+  "interval-signals-1991": {
+   "ok": true,
+   "ms": 766,
+   "note": "206 audio/mpeg"
+  },
+  "dawn-chorus-alberta": {
+   "ok": true,
+   "ms": 590,
+   "note": "206 audio/mpeg"
+  },
+  "loma-prieta-kgo": {
+   "ok": true,
+   "ms": 839,
+   "note": "206 audio/mpeg"
+  },
+  "whistlers-london": {
+   "ok": true,
+   "ms": 555,
+   "note": "206 audio/mpeg"
+  },
+  "alaska-chorus": {
+   "ok": true,
+   "ms": 391,
+   "note": "206 audio/mpeg"
+  },
+  "omega-tones": {
+   "ok": true,
+   "ms": 469,
+   "note": "206 audio/mpeg"
+  },
+  "voyager-jupiter": {
+   "ok": true,
+   "ms": 662,
+   "note": "206 audio/mpeg"
+  }
+ }
+}
