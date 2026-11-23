@@ -70,6 +70,12 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;margin:0
 /* Dial */
 .dialbox{position:relative;margin:18px -18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
   background:linear-gradient(180deg,rgba(214,180,110,.035),transparent 40%,rgba(0,0,0,.25))}
+.dialmode{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line2);border-radius:999px;margin:4px 0 2px}
+.dialmode button{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);padding:9px 14px;border-radius:999px;display:flex;align-items:center;gap:8px;transition:all .2s}
+.dialmode button b{font-weight:400;opacity:.7}
+.dialmode button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.dialmode button[aria-pressed=true] .ld{background:#c0392b}
+.dialmode .ld{width:6px;height:6px;border-radius:50%;background:var(--k-live);animation:pulse 2s ease-in-out infinite}
 .readout{display:flex;align-items:flex-end;justify-content:space-between;padding:14px 18px 6px;gap:12px}
 .readout .f{font-family:var(--mono);font-weight:300;font-size:clamp(28px,8vw,46px);letter-spacing:.02em;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
 .readout .f small{font-size:.38em;color:var(--mute);letter-spacing:.14em;margin-left:6px}
@@ -258,7 +264,8 @@ dialog.sheet[open]{animation:up .38s cubic-bezier(.2,.8,.2,1)}
   <section class="view on" id="v-dial">
     <div class="wrap">
       <h1 class="lede">Tune across the world's <em>invisible</em> radio.</h1>
-      <p class="sub" id="dialsub">Swipe the dial from very low frequency to VHF. Every mark is a real, verified source you can hear in this page. Signals with no logged frequency sit at the far end, off the dial.</p>
+      <p class="sub" id="dialsub"></p>
+      <div class="dialmode" role="group" aria-label="Dial contents"><button id="m-live" aria-pressed="true"><i class="ld"></i>On air now <b id="n-live">—</b></button><button id="m-all" aria-pressed="false">All signals <b id="n-all">—</b></button></div>
       <div class="dialbox">
         <div class="readout">
           <div class="f" id="rf">— <small>kHz</small></div>
@@ -410,7 +417,7 @@ async function play(s){
   try{
     if(s.fmt==="hls"&&!canNativeHls){ await loadHls(); if(!window.Hls||!Hls.isSupported())throw new Error("HLS unsupported");
       hls=new Hls({lowLatencyMode:false}); hls.attachMedia(au); hls.loadSource(s.url);
-      hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setP("error","No signal");LOCAL[s.id]=false}});
+      hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal){setP("error","No signal");LOCAL[s.id]=false;dropFromDial(s)}});
     } else { au.src=s.url; }
     au.volume=+$("#vol").value; await au.play();
   }catch(e){ if(e&&e.name==="NotAllowedError"){setP("paused","Tap play to start")} else if(e&&e.name!=="AbortError"){setP("error","No signal");} }
@@ -423,7 +430,8 @@ function toggle(){ if(!state.cur)return; if(au.paused||pstate==="error"){ if(pst
 au.addEventListener("playing",()=>{setP("playing"); if(state.cur)LOCAL[state.cur.id]=true});
 au.addEventListener("waiting",()=>{if(!au.paused)setP("loading","Buffering")});
 au.addEventListener("pause",()=>{if(pstate!=="error"&&pstate!=="loading")setP("paused")});
-au.addEventListener("error",()=>{ if(!au.getAttribute("src"))return; setP("error","No signal — source did not respond"); if(state.cur)LOCAL[state.cur.id]=false; });
+function dropFromDial(s){ if(dialMode!=="live"||!isLiveKind(s))return; if(!marks.some(m=>m.s.id===s.id))return; const id=state.tuned&&state.tuned.id; dialCopy(); buildDial(); let i=marks.findIndex(m=>m.s.id===id); if(i<0)i=Math.min(Math.max(0,tunedI),marks.length-1); if(marks.length)tuneTo(i,false); toast(s.title+" is off air — removed from the dial") }
+au.addEventListener("error",()=>{ if(!au.getAttribute("src"))return; setP("error","No signal — source did not respond"); if(state.cur){LOCAL[state.cur.id]=false; dropFromDial(state.cur)} });
 au.addEventListener("ended",()=>{ setP("paused","Finished"); });
 au.addEventListener("timeupdate",()=>{ const s=state.cur; if(!s||s.kind==="live"||s.kind==="stream"||!isFinite(au.duration))return; const p=au.currentTime/au.duration; $("#prog i").style.width=(p*100)+"%"; $("#seek").value=Math.round(p*1000);
   if(pstate==="playing"){ $("#pm").innerHTML=`<b>${fmtT(au.currentTime)} / ${fmtT(au.duration)}</b> · ${esc(s.place)}${s.freq?" · "+esc(s.freq):""}`} });
@@ -479,15 +487,28 @@ sheet.addEventListener("close",()=>{ if(location.hash.startsWith("#/s/"))history
 
 /* ---------- DIAL ---------- */
 let marks=[], dialW=0, segs=[];
+let dialMode="live"; try{ dialMode=localStorage.getItem("fa.dialmode")||"live" }catch(e){}
+const isLiveKind=s=>s.kind==="live"||s.kind==="stream";
+function onAirNow(){ return SRC.filter(s=>isLiveKind(s)&&statusOf(s)!=="bad") }
+function dialSet(){ return dialMode==="live"?onAirNow():SRC }
+function dialCopy(){ const n=onAirNow().length;
+  $("#n-live").textContent=n; $("#n-all").textContent=SRC.length; $("#m-live").setAttribute("aria-pressed",String(dialMode==="live")); $("#m-all").setAttribute("aria-pressed",String(dialMode==="all"));
+  $("#dialsub").textContent=dialMode==="live"
+   ?`Only stations transmitting right now: ${n} continuous live streams that passed the last check. If one fails when you tune in, it drops off the dial. Stations with no single frequency sit at the far end.`
+   :"Every source in the Atlas, live and recorded, from very low frequency to VHF. Recordings sit at the frequency they were heard on; signals with no logged frequency sit at the far end." }
+function setDialMode(m){ if(m===dialMode)return; const id=state.tuned&&state.tuned.id; dialMode=m; try{localStorage.setItem("fa.dialmode",m)}catch(e){} dialCopy(); buildDial(); let i=marks.findIndex(x=>x.s.id===id); if(i<0)i=defaultMark(); tuneTo(i,false) }
+function defaultMark(){ const pref=dialMode==="live"?["bbc-radio-4","noaa-kec49"]:["uvb-76"]; for(const id of pref){const i=marks.findIndex(m=>m.s.id===id); if(i>=0)return i} return 0 }
 function buildDial(){
   const tr=$("#track"); const vw=tr.clientWidth||window.innerWidth; const unit=Math.max(300,Math.min(520,vw*.82));
-  let x=vw/2; segs=BANDS.map(b=>{const w=unit*b.w; const sg={...b,x0:x,x1:x+w}; x+=w; return sg}); dialW=x+vw/2;
+  const SET=dialSet(); const used=new Set(SET.map(s=>{ if(parseFreq(s)!=null){const k=parseFreq(s);const b=BANDS.find(g=>g.lo!=null&&k>=g.lo&&k<g.hi);return b?b.k:(k<3?"VLF":"VHF")} return bandOf(s)||"NET" }));
+  let x=vw/2; segs=BANDS.map(b=>{const w=unit*(used.has(b.k)?b.w:.34); const sg={...b,x0:x,x1:x+w,empty:!used.has(b.k)}; x+=w; return sg}); dialW=x+vw/2;
   const posF=k=>{const sg=segs.find(g=>g.lo!=null&&k>=g.lo&&k<g.hi)||(k<3?segs[0]:segs[4]); const t=Math.log10(k/sg.lo)/Math.log10(sg.hi/sg.lo); return sg.x0+t*(sg.x1-sg.x0)};
   // place markers
   const exact=[], bandOnly={}, off=[];
-  SRC.forEach(s=>{const k=parseFreq(s); if(k!=null) exact.push({s,x:posF(k),k,lane:0}); else { const b=bandOf(s); if(b){(bandOnly[b]=bandOnly[b]||[]).push(s)} else off.push(s) } });
+  SET.forEach(s=>{const k=parseFreq(s); if(k!=null) exact.push({s,x:posF(k),k,lane:0}); else { const b=bandOf(s); if(b){(bandOnly[b]=bandOnly[b]||[]).push(s)} else off.push(s) } });
   for(const b in bandOnly){ const sg=segs.find(g=>g.k===b), L=bandOnly[b]; L.forEach((s,i)=>exact.push({s,x:sg.x0+(sg.x1-sg.x0)*(i+1)/(L.length+1),k:null,lane:1})) }
   const ng=segs[5]; off.forEach((s,i)=>exact.push({s,x:ng.x0+(ng.x1-ng.x0)*(i+.5)/off.length,k:null,lane:2}));
+  if(!exact.length){ tr.innerHTML=`<p class="sub" style="padding:60px 18px">No live stations passed the last check. Switch to All signals.</p>`; marks=[]; return }
   marks=exact.sort((a,b)=>a.x-b.x);
   for(let lane=0;lane<3;lane++){ const L=marks.filter(m=>m.lane===lane); for(let i=1;i<L.length;i++){ if(L[i].x-L[i-1].x<22) L[i].x=L[i-1].x+22 } }
   marks.sort((a,b)=>a.x-b.x);
@@ -496,7 +517,7 @@ function buildDial(){
   g+=`<defs><linearGradient id="gl" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d6b46e" stop-opacity=".0"/><stop offset="1" stop-color="#d6b46e" stop-opacity=".22"/></linearGradient></defs>`;
   segs.forEach((sg,i)=>{ g+=`<rect x="${sg.x0}" y="58" width="${sg.x1-sg.x0}" height="${H-58}" fill="${i%2?"rgba(236,226,204,.012)":"transparent"}"/>`;
     g+=`<line x1="${sg.x0}" x2="${sg.x0}" y1="58" y2="${H}" stroke="rgba(236,226,204,.16)"/>`;
-    g+=`<text x="${sg.x0+10}" y="74" fill="#d6b46e" font-family="IBM Plex Mono" font-size="10" letter-spacing="2.4">${sg.k}</text><text x="${sg.x0+10}" y="88" fill="#7f7a6d" font-family="IBM Plex Mono" font-size="8.5" letter-spacing="1.4">${sg.name.toUpperCase()}</text>`;
+    g+=`<text x="${sg.x0+10}" y="74" fill="${sg.empty?"#4b4840":"#d6b46e"}" font-family="IBM Plex Mono" font-size="10" letter-spacing="2.4">${sg.k}</text><text x="${sg.x0+10}" y="88" fill="#7f7a6d" font-family="IBM Plex Mono" font-size="8.5" letter-spacing="1.4">${sg.name.toUpperCase()}</text>`;
     if(sg.lo!=null){ const dec=Math.log10(sg.hi/sg.lo); for(let m=Math.pow(10,Math.floor(Math.log10(sg.lo)));m<sg.hi;m*=10){ for(const f of [1,2,3,4,5,6,7,8,9]){ const k=m*f; if(k>=sg.hi)break; if(k<sg.lo)continue; const xx=sg.x0+Math.log10(k/sg.lo)/dec*(sg.x1-sg.x0); const major=f===1||f===2||f===5;
       g+=`<line x1="${xx}" x2="${xx}" y1="${base-(major?14:7)}" y2="${base}" stroke="rgba(236,226,204,${major?.34:.14})"/>`;
       if(major){ g+=`<text x="${xx}" y="${base+16}" fill="#7f7a6d" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">${tickLab(k)}</text>`} } } }
@@ -514,16 +535,16 @@ function buildDial(){
 function freqAt(x){ const sg=segs.find(g=>x>=g.x0&&x<g.x1); if(!sg)return {sg:null}; if(sg.lo==null)return {sg}; const t=(x-sg.x0)/(sg.x1-sg.x0); return {sg,k:sg.lo*Math.pow(sg.hi/sg.lo,t)} }
 let tunedI=-1, scrollT=null, programmatic=false;
 function centreX(){ const tr=$("#track"); return tr.scrollLeft+tr.clientWidth/2 }
-function updReadout(){ const x=centreX(); const {sg,k}=freqAt(x); const m=marks[tunedI];
+function updReadout(){ if(!marks.length)return; const x=centreX(); const {sg,k}=freqAt(x); const m=marks[tunedI];
   const near=marks.reduce((b,mm,i)=>Math.abs(mm.x-x)<Math.abs((marks[b]||{x:1e9}).x-x)?i:b,0);
   $$(".mk").forEach((n,i)=>n.classList.toggle("near",i===near&&Math.abs(marks[near].x-x)<12));
   if(m&&Math.abs(m.x-x)<3&&m.k==null){ const b=bandOf(m.s); $("#rf").innerHTML=m.lane===2?`NET <small>off dial</small>`:`${b} <small>band</small>`; $("#rb").innerHTML=m.lane===2?"No frequency<br>online or field":"Frequency not<br>logged"; return }
   if(!sg){return} if(sg.lo==null){ $("#rf").innerHTML=`NET <small>off dial</small>`; $("#rb").innerHTML="Online streams &amp;<br>field recordings"; return }
   const f=m&&Math.abs(m.x-x)<3&&m.k!=null?fmtF(m.k):fmtF(k); $("#rf").innerHTML=`${f.u==="kHz"&&Number(f.v)>=1000?Number(f.v).toLocaleString("en-GB"):f.v} <small>${f.u}</small>`; $("#rb").innerHTML=`${sg.k}<br><span style="color:var(--mute)">${sg.name}</span>`;
 }
-function tuneTo(i,smooth){ if(i<0||i>=marks.length)return; tunedI=i; const tr=$("#track"); programmatic=true; tr.scrollTo({left:marks[i].x-tr.clientWidth/2,behavior:smooth?"smooth":"auto"}); setTimeout(()=>programmatic=false,smooth?600:50);
+function tuneTo(i,smooth){ if(!marks.length||i<0||i>=marks.length)return; tunedI=i; const tr=$("#track"); programmatic=true; tr.scrollTo({left:marks[i].x-tr.clientWidth/2,behavior:smooth?"smooth":"auto"}); setTimeout(()=>programmatic=false,smooth?600:50);
   state.tuned=marks[i].s; renderTuned(marks[i].s); $("#pos").textContent=`${pad(i+1)} / ${pad(marks.length)}`; updReadout(); try{localStorage.setItem("fa.tuned",marks[i].s.id)}catch(e){} }
-function snap(){ const x=centreX(); let best=0; marks.forEach((m,i)=>{ if(Math.abs(m.x-x)<Math.abs(marks[best].x-x))best=i }); if(best!==tunedI||Math.abs(marks[best].x-x)>1) tuneTo(best,true) }
+function snap(){ if(!marks.length)return; const x=centreX(); let best=0; marks.forEach((m,i)=>{ if(Math.abs(m.x-x)<Math.abs(marks[best].x-x))best=i }); if(best!==tunedI||Math.abs(marks[best].x-x)>1) tuneTo(best,true) }
 function bindDial(){ const tr=$("#track");
   tr.addEventListener("scroll",()=>{ requestAnimationFrame(updReadout); if(programmatic)return; clearTimeout(scrollT); scrollT=setTimeout(snap,160) },{passive:true});
   // mouse drag for desktop
@@ -598,7 +619,7 @@ function renderMap(){
   $("#mapbox").innerHTML=s; $$("#mapbox .dot").forEach(d=>d.addEventListener("click",()=>openSheet(BY[d.dataset.id])));
   $("#legend").innerHTML=Object.keys(KIND).map(k=>`<span class="kind k-${k}"><i></i>${KIND[k]}</span>`).join("");
   const regs={}; SRC.forEach(x=>{(regs[x.region]=regs[x.region]||[]).push(x)});
-  const order=["Arctic","Europe","North America","Caribbean","South Atlantic","Asia","Pacific","Antarctica","Deep space","Online"];
+  const order=["Arctic","Europe","North America","Caribbean","South America","South Atlantic","Africa","Middle East","Asia","Pacific","Antarctica","Deep space","Online"]; Object.keys(regs).forEach(r=>{if(!order.includes(r))order.push(r)});
   $("#regions").innerHTML=""; order.filter(r=>regs[r]).forEach(r=>{ $("#regions").append(el("div",{class:"shead",html:`<h3>${esc(r)}</h3><span class="eyebrow">${regs[r].length} signal${regs[r].length>1?"s":""}</span>`})); const rw=el("div",{class:"rows"}); regs[r].forEach(x=>rw.append(rowEl(x))); $("#regions").append(rw) });
 }
 
@@ -653,8 +674,9 @@ setInterval(tick,1000); setInterval(()=>{ if($("#v-now").classList.contains("on"
   DATA=await fetch("sources.json",{cache:"no-cache"}).then(r=>r.json());
   try{ STATUS=await fetch("status.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{results:{}}) }catch(e){}
   SRC=DATA.sources; SRC.forEach(s=>BY[s.id]=s); tick();
+  dialCopy(); $("#m-live").onclick=()=>setDialMode("live"); $("#m-all").onclick=()=>setDialMode("all");
   buildDial(); bindDial(); renderColls(); renderIndex(); if(!canNativeHls)setTimeout(()=>loadHls().catch(()=>{}),1500);
-  let start=0; try{ const t=localStorage.getItem("fa.tuned"); const i=marks.findIndex(m=>m.s.id===t); if(i>=0)start=i; else start=marks.findIndex(m=>m.s.id==="uvb-76") }catch(e){}
+  let start=0; try{ const t=localStorage.getItem("fa.tuned"); const i=marks.findIndex(m=>m.s.id===t); start=i>=0?i:defaultMark() }catch(e){ start=defaultMark() }
   tuneTo(Math.max(0,start),false);
   let v="dial"; try{ v=localStorage.getItem("fa.view")||"dial" }catch(e){} if(!["dial","now","map","collections","index"].includes(v))v="dial"; show(v);
   route();

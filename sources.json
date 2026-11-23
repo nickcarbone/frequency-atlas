@@ -212,7 +212,9 @@
    "lon": -68.517,
    "tz": "America/Iqaluit",
    "lang": "English · Inuktitut",
+   "freq": "1230 kHz · 91.1 MHz FM",
    "band": "MW",
+   "mode": "AM",
    "character": [
     "voice",
     "music"
@@ -227,8 +229,6 @@
    ],
    "blurb": "The public broadcaster's service for Canada's far north, heard from the capital of Nunavut on Baffin Island. Programming moves between English and Inuktitut.",
    "hear": "Regional news, community notices and music from a town of a few thousand people on Frobisher Bay.",
-   "freq": null,
-   "mode": null,
    "recorded": null,
    "utc": null,
    "schedule": null,
